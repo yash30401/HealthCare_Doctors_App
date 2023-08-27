@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentAuthBinding
@@ -31,18 +32,38 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAuthBinding.bind(view)
 
+        listOfServices = emptyList<String>().toMutableList()
+
         binding.btnAddService.setOnClickListener {
-            val service = binding.tilServicesLayout.editText?.text.toString()
+            addChip()
+        }
+
+    }
+
+    private fun addChip() {
+        val service = binding.tilServicesLayout.editText?.text.toString()
+
+        if(service == ""){
+            Toast.makeText(requireContext(), "Please Enter Service", Toast.LENGTH_SHORT).show()
+        }else{
             val chip  = Chip(requireContext())
             chip.setText(service)
             chip.chipStrokeWidth = 0F
             chip.setChipBackgroundColorResource(R.color.specialistCardBackgroundColor)
-            chip.chipIcon = ContextCompat.getDrawable(requireContext(),R.drawable.baseline_delete_24)
+            chip.chipCornerRadius = 20F
+            chip.isCloseIconVisible = true
+            chip.closeIcon = ContextCompat.getDrawable(requireContext(),R.drawable.baseline_delete_24)
 
             binding.chipGroupServices.addView(chip)
             listOfServices.add(service)
             binding.tilServicesLayout.editText?.text?.clear()
+
+            chip.setOnCloseIconClickListener {
+                binding.chipGroupServices.removeView(chip)
+                listOfServices.remove(service)
+            }
         }
+
     }
 
     override fun onDestroy() {
