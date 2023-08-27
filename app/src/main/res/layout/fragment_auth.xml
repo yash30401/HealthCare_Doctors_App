@@ -185,7 +185,45 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- Add ChipGroup and Add Button for services here -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilServicesLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Service">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etService"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnAddService"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:layout_marginTop="5dp"
+                />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupServices"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </HorizontalScrollView>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -195,7 +233,20 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- Add EditText for working hours here -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilWorkingHoursLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Working Hours">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etWorkingHours"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -238,9 +289,9 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/btnRegister"
-        style="@style/Widget.MaterialComponents.Button"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Register"
