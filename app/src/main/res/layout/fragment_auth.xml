@@ -41,20 +41,47 @@
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/group_54"/>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPhoneNoLayout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone No">
+                android:layout_marginTop="25dp"
+                android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPhoneNo"
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/etCountryCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="6dp"
+                    app:ccp_clickable="true"
+                    app:ccp_showArrow="false"
+                    app:ccp_showFlag="false"
+                    app:ccp_showFullName="false"
+                    app:ccp_showNameCode="false"
+                    app:ccp_textGravity="CENTER"
+                    app:ccp_textSize="14sp"
+                    />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/etMobileNo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone"/>
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true"
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_toEndOf="@+id/tvView"
+                    android:background="@drawable/bg_phone_edittext"
+                    android:hint="00000 00000"
+                    android:inputType="phone"
+                    android:maxLength="10"
+                    android:paddingHorizontal="6dp"
+                    android:paddingStart="80dp"
+                    android:textSize="14sp"
+                    app:layout_constraintTop_toBottomOf="@+id/tvMobile" />
+            </LinearLayout>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilFullNameLayout"
