@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     tools:context=".ui.fragments.AuthFragment">
 
     <ScrollView
@@ -70,14 +71,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_centerVertical="true"
-
+                    android:backgroundTint="@color/white"
                     android:layout_toEndOf="@+id/tvView"
                     android:background="@drawable/bg_phone_edittext"
                     android:hint="00000 00000"
                     android:inputType="phone"
                     android:maxLength="10"
                     android:paddingHorizontal="6dp"
-                    android:paddingStart="80dp"
+                    android:paddingStart="10dp"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@+id/tvMobile" />
             </LinearLayout>
@@ -87,6 +88,7 @@
                 android:id="@+id/tilFullNameLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
+                app:boxBackgroundColor="@color/white"
                 android:layout_height="wrap_content"
                 android:hint="Full Name">
 
@@ -101,6 +103,7 @@
                 android:id="@+id/tilSpecializationLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
+                app:boxBackgroundColor="@color/white"
                 android:layout_height="wrap_content"
                 android:hint="Specialization">
 
@@ -115,6 +118,9 @@
                 android:id="@+id/tilAboutLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
+                app:boxBackgroundColor="@color/white"
+                app:counterEnabled="true"
+                app:counterMaxLength="1000"
                 android:layout_height="wrap_content"
                 android:hint="About">
 
@@ -132,6 +138,7 @@
                 android:id="@+id/tilCityLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
+                app:boxBackgroundColor="@color/white"
                 android:layout_height="wrap_content"
                 android:hint="City/Town">
 
@@ -145,6 +152,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilAddressLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxBackgroundColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Address">
@@ -159,6 +167,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilExperienceLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxBackgroundColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Experience in Years">
@@ -182,6 +191,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilEmailLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxBackgroundColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email (Optional)">
@@ -198,6 +208,7 @@
                 android:id="@+id/tilWebsiteLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
+                app:boxBackgroundColor="@color/white"
                 android:layout_height="wrap_content"
                 android:hint="Website (Optional)">
 
@@ -222,6 +233,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxBackgroundColor="@color/white"
                 android:layout_weight="1"
                 android:hint="Service">
 
@@ -270,6 +282,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxBackgroundColor="@color/white"
                 android:layout_weight="1"
                 android:hint="Working Hours">
 
@@ -292,6 +305,7 @@
                 android:id="@+id/tilClinicVisitLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
+                app:boxBackgroundColor="@color/white"
                 android:layout_height="wrap_content"
                 android:hint="Clinic Visit Fee (in Rupees)">
 
@@ -308,6 +322,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:boxBackgroundColor="@color/white"
                 android:hint="Video Consult Fee (in Rupees)">
 
                 <com.google.android.material.textfield.TextInputEditText
