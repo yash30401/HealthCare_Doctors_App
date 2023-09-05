@@ -70,9 +70,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         ) {
             Toast.makeText(requireContext(), "Empty Fields!", Toast.LENGTH_SHORT).show()
         } else if (servicesSize == 0) {
-
             Toast.makeText(requireContext(), "Please Add Services", Toast.LENGTH_SHORT).show()
-
         } else {
             registerDoctor()
         }
