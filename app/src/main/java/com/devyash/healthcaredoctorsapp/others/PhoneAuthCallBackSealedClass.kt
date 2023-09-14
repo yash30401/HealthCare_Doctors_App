@@ -1,0 +1,67 @@
+package com.devyash.healthcaredoctorsapp.others
+
+import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
+import com.google.firebase.FirebaseException
+import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
+
+sealed class PhoneAuthCallBackSealedClass(
+    val verificationId:String?,
+    val token:ForceResendingToken?,
+    val firebaseException: String?,
+    val firebaseAuthInvalidCredentialsException: String?,
+    val firebaseTooManyRequestsException: String?,
+    val firebaseAuthMissingActivityForRecaptchaException: String?
+) {
+
+    class ONVERIFICATIONCOMPLETED:PhoneAuthCallbackSealedClass(
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    )
+
+    class ONVERIFICATIONFAILED(firebaseAuthInvalidCredentialsException: String?):PhoneAuthCallbackSealedClass(
+        null,
+        null,
+        null,
+        firebaseAuthInvalidCredentialsException,
+        null,
+        null
+    )
+
+
+    class FIREBASETOOMANYREQUESTSEXCEPTION(firebaseTooManyRequestsException: String?) :
+        PhoneAuthCallbackSealedClass(
+            null,
+            null,
+            null,
+            null,
+            firebaseTooManyRequestsException,
+            null
+        )
+
+    class FIREBASEAUTHMISSINGACTIVITYFORRECAPTCHAEXCEPTION(
+        firebaseAuthMissingActivityForRecaptchaException: String?
+    ) :
+        PhoneAuthCallbackSealedClass(
+            null,
+            null,
+            null,
+            null,
+            null,
+            firebaseAuthMissingActivityForRecaptchaException
+        )
+
+    class ONCODESENT(verificationId: String, token: ForceResendingToken) :
+        PhoneAuthCallbackSealedClass(
+            verificationId,
+            token,
+            null,
+            null,
+            null,
+            null
+        )
+
+}

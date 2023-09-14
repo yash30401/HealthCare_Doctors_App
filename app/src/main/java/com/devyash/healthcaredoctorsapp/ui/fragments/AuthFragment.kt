@@ -92,15 +92,21 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                 sendVerificationCodeToPhoneNumber()
             }
             PhoneNumberValidation.EMPTY -> {
-
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(context, "Please Enter Your Mobile Number", Toast.LENGTH_SHORT)
+                    .show()
             }
             PhoneNumberValidation.WRONGFORMAT -> {
-
+                binding.progressBar.visibility = View.GONE
             }
         }
     }
 
     private fun sendVerificationCodeToPhoneNumber() {
+        binding.progressBar.visibility =View.VISIBLE
+        binding.btnRegister.isEnabled = false
+
+        val phoneNumber = "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
 
     }
 
