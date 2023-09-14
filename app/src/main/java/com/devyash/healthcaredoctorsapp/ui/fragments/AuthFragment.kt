@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentAuthBinding
+import com.devyash.healthcaredoctorsapp.others.PhoneNumberValidation
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -77,7 +78,30 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     }
 
     private fun registerDoctor() {
-        Toast.makeText(requireContext(), "Successfull", Toast.LENGTH_SHORT).show()
+        val phoneNumberValidation = validatePhoneNumber(binding.etMobileNo.text.toString())
+        phoneNoEventsHandle(phoneNumberValidation)
+    }
+
+    private fun validatePhoneNumber(number: String): PhoneNumberValidation =
+        if (number.isEmpty()) PhoneNumberValidation.EMPTY else PhoneNumberValidation.SUCCESS
+
+    private fun phoneNoEventsHandle(phoneNumberValidation: PhoneNumberValidation) {
+        when(phoneNumberValidation){
+            PhoneNumberValidation.SUCCESS -> {
+                binding.progressBar.visibility = View.VISIBLE
+                sendVerificationCodeToPhoneNumber()
+            }
+            PhoneNumberValidation.EMPTY -> {
+
+            }
+            PhoneNumberValidation.WRONGFORMAT -> {
+
+            }
+        }
+    }
+
+    private fun sendVerificationCodeToPhoneNumber() {
+
     }
 
 
