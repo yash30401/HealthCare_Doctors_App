@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentOtpBinding
@@ -55,6 +56,14 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         setupPhoneNumberTextView()
         startOtpResendTimer()
 
+        binding.tvPhoneNo.setOnClickListener {
+            editPhoneNumberAndNavigateBackToAuthScreen()
+        }
+
+        binding.ivEditPhoneNo.setOnClickListener {
+            editPhoneNumberAndNavigateBackToAuthScreen()
+        }
+
         binding.btnVerifyOtp.setOnClickListener {
             val otp = binding.etOtpPin.editableText.toString()
             val verificationId = args.verificationId
@@ -79,6 +88,10 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             phoneNumber.get(12)
         }"
         binding.tvPhoneNo.text = hiddenPhoneNumberText
+    }
+
+    private fun editPhoneNumberAndNavigateBackToAuthScreen(){
+        findNavController().navigate(R.id.action_otpFragment_to_authFragment)
     }
 
     private fun startOtpResendTimer() {

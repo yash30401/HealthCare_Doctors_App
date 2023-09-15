@@ -33,5 +33,8 @@
         <argument
             android:name="resendToken"
             app:argType="com.devyash.healthcaredoctorsapp.models.ResendTokenModelClass" />
+        <action
+            android:id="@+id/action_otpFragment_to_authFragment"
+            app:destination="@id/authFragment" />
     </fragment>
 </navigation>
