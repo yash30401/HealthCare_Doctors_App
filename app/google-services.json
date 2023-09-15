@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1032461311002-42r22gkt9bf7bthmkafeiv3tcbn8nm8t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devyash.healthcaredoctorsapp",
+            "certificate_hash": "5aa585828c05539faef41f0310bc3897de911ce3"
+          }
+        },
+        {
           "client_id": "1032461311002-heodl5e1hpth05c3d61jrq25f1fqiirk.apps.googleusercontent.com",
           "client_type": 3
         }

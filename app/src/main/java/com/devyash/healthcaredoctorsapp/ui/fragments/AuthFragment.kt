@@ -1,23 +1,37 @@
 package com.devyash.healthcaredoctorsapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.findNavController
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentAuthBinding
+import com.devyash.healthcaredoctorsapp.models.ResendTokenModelClass
+import com.devyash.healthcaredoctorsapp.others.Constants.AUTHVERIFICATIONTAG
+import com.devyash.healthcaredoctorsapp.others.Constants.FACEBOOKTEST
 import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallBackSealedClass
-import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallbackSealedClass
 import com.devyash.healthcaredoctorsapp.others.PhoneNumberValidation
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
 import com.google.android.material.chip.Chip
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -32,6 +46,12 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     @Inject
     lateinit var phoneAuthCallback: PhoneAuthCallback
 
+    private lateinit var storedVerificationId: String
+    private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
+
+    private lateinit var callback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,6 +65,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAuthBinding.bind(view)
 
+        callback = phoneAuthCallback.callbacks
         listOfServices = emptyList<String>().toMutableList()
 
         binding.btnAddService.setOnClickListener {
@@ -77,7 +98,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
 
 
-        if (etMobileNo.isNullOrEmpty() || fullName.isNullOrEmpty() || specialization.isNullOrEmpty() || about.isNullOrEmpty()
+        if (fullName.isNullOrEmpty() || specialization.isNullOrEmpty() || about.isNullOrEmpty()
             || city.isNullOrEmpty() || address.isNullOrEmpty() || experience.isNullOrEmpty() || workingHours.isNullOrEmpty() || clinicVisit.isNullOrEmpty() || videoConsult.isNullOrEmpty()
         ) {
             Toast.makeText(requireContext(), "Empty Fields!", Toast.LENGTH_SHORT).show()
@@ -123,17 +144,94 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             phoneAuthCallback.callbackFlow?.collect{
                 when(it){
                     is PhoneAuthCallBackSealedClass.FIREBASEAUTHINVALIDCREDENTIALSEXCEPTION -> {
+                        Log.d(
+                            AUTHVERIFICATIONTAG,
+                            "onVerificationFailed: ${it.firebaseAuthInvalidCredentialsException}"
+                        )
+                        withContext(Dispatchers.Main){
+                            Toast.makeText(context, "Invalid Credentials!", Toast.LENGTH_SHORT)
+                                .show()
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnRegister.isEnabled = true
+                        }
+                    }
+                    is PhoneAuthCallBackSealedClass.FIREBASEAUTHMISSINGACTIVITYFORRECAPTCHAEXCEPTION -> {
+                        Log.d(
+                            AUTHVERIFICATIONTAG,
+                            "onVerificationFailed: ${it.firebaseAuthMissingActivityForRecaptchaException}"
+                        )
+                        withContext(Dispatchers.IO) {
+                            Toast.makeText(context, "reCaptcha Problem", Toast.LENGTH_SHORT).show()
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnRegister.isEnabled = true
+                        }
+                    }
+                    is PhoneAuthCallBackSealedClass.FIREBASETOOMANYREQUESTSEXCEPTION -> {
+                        Log.d(
+                            AUTHVERIFICATIONTAG,
+                            "onVerificationFailed: ${it.firebaseTooManyRequestsException}"
+                        )
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Too many requests", Toast.LENGTH_SHORT).show()
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnRegister.isEnabled = true
+                        }
+                    }
+                    is PhoneAuthCallBackSealedClass.ONCODESENT -> {
+                        Log.d("AUTHVERIFICATION", "onCodeSent:${it.verificationId}")
+
+
+                            suspendCancellableCoroutine { continuation ->
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val result = async {
+                                        storedVerificationId = it.verificationId.toString()
+                                        resendToken = it.token!!
+                                    }
+                                    continuation.resume(result.await(), {
+                                        Log.d(FACEBOOKTEST, it.message.toString())
+                                    }) // Resume the coroutine with the result
+                                }
+                            }
+
+
+                            val action =
+                                AuthFragmentDirections.actionAuthFragmentToOtpFragment(
+                                    it.verificationId.toString(),
+                                    phoneNumber,
+                                    ResendTokenModelClass(resendToken)
+                                )
+                            withContext(Dispatchers.Main) {
+                                findNavController().navigate(action)
+                            }
 
                     }
-                    is PhoneAuthCallBackSealedClass.FIREBASEAUTHMISSINGACTIVITYFORRECAPTCHAEXCEPTION -> TODO()
-                    is PhoneAuthCallBackSealedClass.FIREBASETOOMANYREQUESTSEXCEPTION -> TODO()
-                    is PhoneAuthCallBackSealedClass.ONCODESENT -> TODO()
-                    is PhoneAuthCallBackSealedClass.ONVERIFICATIONCOMPLETED -> TODO()
-                    is PhoneAuthCallBackSealedClass.ONVERIFICATIONFAILED -> TODO()
-                    null -> TODO()
+                    is PhoneAuthCallBackSealedClass.ONVERIFICATIONCOMPLETED -> {
+                        Log.d(AUTHVERIFICATIONTAG, "Verification Completed")
+                    }
+                    is PhoneAuthCallBackSealedClass.ONVERIFICATIONFAILED -> {
+                        Log.d(AUTHVERIFICATIONTAG, "onVerificationFailed: ${it.firebaseException}")
+                        withContext(Dispatchers.Main) {
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnRegister.isEnabled = true
+                        }
+                    }
+                    else->{
+                        Log.d(
+                            AUTHVERIFICATIONTAG,
+                            "Verification Error: ${it?.firebaseException}"
+                        )
+                    }
                 }
             }
         }
+
+        val options = PhoneAuthOptions.newBuilder(Firebase.auth)
+            .setPhoneNumber(phoneNumber)
+            .setTimeout(60L,TimeUnit.SECONDS)
+            .setActivity(requireActivity())
+            .setCallbacks(callback)
+            .build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
 

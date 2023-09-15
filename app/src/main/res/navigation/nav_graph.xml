@@ -14,5 +14,24 @@
         android:id="@+id/authFragment"
         android:name="com.devyash.healthcaredoctorsapp.ui.fragments.AuthFragment"
         android:label="fragment_auth"
-        tools:layout="@layout/fragment_auth" />
+        tools:layout="@layout/fragment_auth" >
+        <action
+            android:id="@+id/action_authFragment_to_otpFragment"
+            app:destination="@id/otpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/otpFragment"
+        android:name="com.devyash.healthcaredoctorsapp.ui.fragments.OtpFragment"
+        android:label="fragment_otp"
+        tools:layout="@layout/fragment_otp" >
+        <argument
+            android:name="verificationId"
+            app:argType="string" />
+        <argument
+            android:name="phoneNumber"
+            app:argType="string" />
+        <argument
+            android:name="resendToken"
+            app:argType="com.devyash.healthcaredoctorsapp.models.ResendTokenModelClass" />
+    </fragment>
 </navigation>
