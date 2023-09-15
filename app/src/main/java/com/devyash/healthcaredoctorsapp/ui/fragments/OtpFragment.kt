@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentOtpBinding
+import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.others.Constants.COUNTDOWNTIMEINMINUTE
 import com.devyash.healthcaredoctorsapp.others.Constants.TAG
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
@@ -26,7 +27,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -172,8 +175,38 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
        }
     }
 
-    private fun siginWithPhoneNumber(credentials: PhoneAuthCredential) {
+    suspend private fun siginWithPhoneNumber(credentials: PhoneAuthCredential) {
+        viewModel?.signInWithPhoneNumber(credentials)
+        delay(3000)
 
+        withContext(Dispatchers.Main){
+            binding.progressBar.visibility = View.GONE
+        }
+
+        viewModel?.loginFlow?.collect{it->
+            when(it){
+                is NetworkResult.Error -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is NetworkResult.Loading -> {
+                    Log.d(TAG,"Loading")
+                }
+                is NetworkResult.Success -> {
+                    withContext(Dispatchers.Main) {
+                        findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
+                        countDownTimer.cancel()
+                    }
+                }
+                else -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+        }
     }
 
     override fun onDestroy() {
