@@ -2,6 +2,7 @@ package com.devyash.healthcaredoctorsapp.ui.fragments
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,12 +15,17 @@ import androidx.navigation.fragment.navArgs
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentOtpBinding
 import com.devyash.healthcaredoctorsapp.others.Constants.COUNTDOWNTIMEINMINUTE
+import com.devyash.healthcaredoctorsapp.others.Constants.TAG
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
 import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -66,6 +72,10 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             editPhoneNumberAndNavigateBackToAuthScreen()
         }
 
+        binding.tvResend.setOnClickListener {
+            resendOtpToPhoneNumber()
+        }
+
         binding.btnVerifyOtp.setOnClickListener {
             val otp = binding.etOtpPin.editableText.toString()
             val verificationId = args.verificationId
@@ -83,6 +93,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             }
         }
     }
+
+
 
     private fun setupPhoneNumberTextView(){
         phoneNumber = args.phoneNumber
@@ -128,6 +140,32 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
         val formattedSeconds = String.format("%02d", seconds)
         binding.tvTimer.text = "$minute:$formattedSeconds"
+    }
+
+    private fun resendOtpToPhoneNumber() {
+       if(isTimerRunning == true){
+           Log.d(TAG, "Timer is Running")
+       }else{
+           val resendToken = args.resendToken.resendToken
+            val options = PhoneAuthOptions.newBuilder(Firebase.auth)
+                .setPhoneNumber(phoneNumber)
+                .setTimeout(60L,TimeUnit.SECONDS)
+                .setActivity(requireActivity())
+                .setCallbacks(callbacks)
+                .setForceResendingToken(resendToken!!)
+                .build()
+           PhoneAuthProvider.verifyPhoneNumber(options)
+
+           binding.tvResend.text = "Resend OTP in: "
+           binding.tvResend.setTextColor(
+               ContextCompat.getColor(
+                   requireContext(),
+                   R.color.black
+               )
+           )
+           binding.tvTimer.visibility = View.VISIBLE
+           startOtpResendTimer()
+       }
     }
 
     private fun siginWithPhoneNumber(credentials: PhoneAuthCredential) {
