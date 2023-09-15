@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,6 +18,7 @@ import com.devyash.healthcaredoctorsapp.databinding.FragmentOtpBinding
 import com.devyash.healthcaredoctorsapp.others.Constants.COUNTDOWNTIMEINMINUTE
 import com.devyash.healthcaredoctorsapp.others.Constants.TAG
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
+import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
@@ -46,6 +48,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     @Inject
     lateinit var phoneAuthCallback: PhoneAuthCallback
     private lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+
+    private val viewModel:AuthViewModel by viewModels<AuthViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
