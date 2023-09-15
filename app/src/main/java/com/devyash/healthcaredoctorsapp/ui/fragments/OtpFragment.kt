@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentOtpBinding
+import com.devyash.healthcaredoctorsapp.others.Constants.COUNTDOWNTIMEINMINUTE
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
@@ -95,7 +97,37 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     }
 
     private fun startOtpResendTimer() {
-        TODO("Not yet implemented")
+        currentCounterTimeInMilliSeconds = COUNTDOWNTIMEINMINUTE.toLong() * 60000L
+        countDownTimer = object :CountDownTimer(currentCounterTimeInMilliSeconds,1000){
+            override fun onTick(p0: Long) {
+                currentCounterTimeInMilliSeconds = p0
+                updateTimerUri()
+            }
+
+            override fun onFinish() {
+                binding.tvTimer.visibility = View.GONE
+                binding.tvResend.text = "Resend OTP"
+                binding.tvResend.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.blueResendTextColor
+                    )
+                )
+                isTimerRunning = false
+            }
+
+        }
+        countDownTimer.start()
+
+        isTimerRunning = true
+    }
+
+    private fun updateTimerUri() {
+        val minute = (currentCounterTimeInMilliSeconds / 1000) / 60
+        val seconds = (currentCounterTimeInMilliSeconds / 1000) % 60
+
+        val formattedSeconds = String.format("%02d", seconds)
+        binding.tvTimer.text = "$minute:$formattedSeconds"
     }
 
     private fun siginWithPhoneNumber(credentials: PhoneAuthCredential) {
