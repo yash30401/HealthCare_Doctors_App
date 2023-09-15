@@ -9,9 +9,16 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentAuthBinding
+import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallBackSealedClass
+import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallbackSealedClass
 import com.devyash.healthcaredoctorsapp.others.PhoneNumberValidation
+import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -21,6 +28,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private val binding get() = _binding!!
 
     private lateinit var listOfServices: MutableList<String>
+
+    @Inject
+    lateinit var phoneAuthCallback: PhoneAuthCallback
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -108,6 +119,21 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
         val phoneNumber = "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
 
+        GlobalScope.launch(Dispatchers.IO) {
+            phoneAuthCallback.callbackFlow?.collect{
+                when(it){
+                    is PhoneAuthCallBackSealedClass.FIREBASEAUTHINVALIDCREDENTIALSEXCEPTION -> {
+
+                    }
+                    is PhoneAuthCallBackSealedClass.FIREBASEAUTHMISSINGACTIVITYFORRECAPTCHAEXCEPTION -> TODO()
+                    is PhoneAuthCallBackSealedClass.FIREBASETOOMANYREQUESTSEXCEPTION -> TODO()
+                    is PhoneAuthCallBackSealedClass.ONCODESENT -> TODO()
+                    is PhoneAuthCallBackSealedClass.ONVERIFICATIONCOMPLETED -> TODO()
+                    is PhoneAuthCallBackSealedClass.ONVERIFICATIONFAILED -> TODO()
+                    null -> TODO()
+                }
+            }
+        }
     }
 
 

@@ -5,15 +5,14 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthProvider.ForceResendingToken
 
 sealed class PhoneAuthCallBackSealedClass(
-    val verificationId:String?,
-    val token:ForceResendingToken?,
+    val verificationId: String?,
+    val token: ForceResendingToken?,
     val firebaseException: String?,
     val firebaseAuthInvalidCredentialsException: String?,
     val firebaseTooManyRequestsException: String?,
     val firebaseAuthMissingActivityForRecaptchaException: String?
 ) {
-
-    class ONVERIFICATIONCOMPLETED:PhoneAuthCallbackSealedClass(
+    class ONVERIFICATIONCOMPLETED : PhoneAuthCallBackSealedClass(
         null,
         null,
         null,
@@ -22,18 +21,27 @@ sealed class PhoneAuthCallBackSealedClass(
         null
     )
 
-    class ONVERIFICATIONFAILED(firebaseAuthInvalidCredentialsException: String?):PhoneAuthCallbackSealedClass(
-        null,
-        null,
-        null,
-        firebaseAuthInvalidCredentialsException,
-        null,
-        null
-    )
+    class ONVERIFICATIONFAILED(firebaseException: String?) :
+        PhoneAuthCallBackSealedClass(
+            null,
+            null, firebaseException,
+            null,
+            null,
+            null
+        )
 
+    class FIREBASEAUTHINVALIDCREDENTIALSEXCEPTION(firebaseAuthInvalidCredentialsException: String?) :
+        PhoneAuthCallBackSealedClass(
+            null,
+            null,
+            null,
+            firebaseAuthInvalidCredentialsException,
+            null,
+            null
+        )
 
     class FIREBASETOOMANYREQUESTSEXCEPTION(firebaseTooManyRequestsException: String?) :
-        PhoneAuthCallbackSealedClass(
+        PhoneAuthCallBackSealedClass(
             null,
             null,
             null,
@@ -45,7 +53,7 @@ sealed class PhoneAuthCallBackSealedClass(
     class FIREBASEAUTHMISSINGACTIVITYFORRECAPTCHAEXCEPTION(
         firebaseAuthMissingActivityForRecaptchaException: String?
     ) :
-        PhoneAuthCallbackSealedClass(
+        PhoneAuthCallBackSealedClass(
             null,
             null,
             null,
@@ -55,7 +63,7 @@ sealed class PhoneAuthCallBackSealedClass(
         )
 
     class ONCODESENT(verificationId: String, token: ForceResendingToken) :
-        PhoneAuthCallbackSealedClass(
+        PhoneAuthCallBackSealedClass(
             verificationId,
             token,
             null,
@@ -63,5 +71,3 @@ sealed class PhoneAuthCallBackSealedClass(
             null,
             null
         )
-
-}
