@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_authFragment_to_otpFragment"
             app:destination="@id/otpFragment" />
+        <action
+            android:id="@+id/action_authFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/otpFragment"

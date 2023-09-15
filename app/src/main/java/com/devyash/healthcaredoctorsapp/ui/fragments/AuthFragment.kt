@@ -44,6 +44,9 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private lateinit var listOfServices: MutableList<String>
 
     @Inject
+    lateinit var firebaseAuth: FirebaseAuth
+
+    @Inject
     lateinit var phoneAuthCallback: PhoneAuthCallback
 
     private lateinit var storedVerificationId: String
@@ -52,6 +55,12 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     private lateinit var callback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (firebaseAuth.currentUser != null) {
+            findNavController().navigate(R.id.action_authFragment_to_homeFragment)
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
