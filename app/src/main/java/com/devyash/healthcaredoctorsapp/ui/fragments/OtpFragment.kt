@@ -169,7 +169,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     }
 
     private fun siginWithPhoneNumber(credentials: PhoneAuthCredential) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onDestroy() {
