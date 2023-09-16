@@ -58,8 +58,8 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.profileFrament -> {
-                    navController.navigate(R.id.profileFrament)
+                R.id.profileFragment -> {
+                    navController.navigate(R.id.profileFragment)
                     true
                 }
 

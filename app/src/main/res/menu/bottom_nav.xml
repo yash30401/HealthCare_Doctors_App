@@ -13,7 +13,7 @@
             android:title="Chat" />
 
         <item
-            android:id="@+id/profileFrament"
+            android:id="@+id/profileFragment"
             android:icon="@drawable/baseline_person"
             android:title="Profile" />
 
