@@ -7,6 +7,7 @@ object Constants {
     const val AUTHVERIFICATIONTAG = "AUTHVERIFICATIONTAG"
     const val FACEBOOKTEST = "FACEBOOKTEST"
     const val MAINFRAGMENTTAG = "MAINFRAGMENTTAG"
+    const val HEADERLAYOUTTAG = "HEADERLAYOUTTAG"
 
     // Coundown Time
     const val COUNTDOWNTIMEINMINUTE = 1

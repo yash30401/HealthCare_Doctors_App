@@ -4,17 +4,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
+import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -114,6 +119,37 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         setupNavigationHeader()
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun setupNavigationHeader() {
+        val headerLayout = navigationView.getHeaderView(0)
+        val phoneNumber = headerLayout.findViewById<TextView>(R.id.tvPhoneNumber)
+
+        val currentUser = firebaseAuth.currentUser
+        Log.d(HEADERLAYOUTTAG, "Phone Number:- ${currentUser?.phoneNumber.toString()}")
+
+        val hiddenPhoneNumberText =
+            "+91${currentUser?.phoneNumber?.get(3)}${currentUser?.phoneNumber?.get(4)}******${
+                currentUser?.phoneNumber?.get(
+                    11
+                )
+            }${
+                currentUser?.phoneNumber?.get(12)
+            }"
+        phoneNumber.text = hiddenPhoneNumberText
+    }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
