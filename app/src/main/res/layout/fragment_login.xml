@@ -7,86 +7,94 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.LoginFragment">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/etMobileNo"
         android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="25dp"
+        android:layout_toEndOf="@+id/tvView"
+        android:background="@drawable/bg_phone_edittext"
+        android:hint="00000 00000"
+        android:inputType="phone"
+        android:maxLength="10"
+        android:paddingHorizontal="6dp"
+        android:paddingStart="80dp"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/tvMobile" />
+
+    <com.hbb20.CountryCodePicker
+        android:id="@+id/etCountryCode"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="50dp"
+        android:layout_centerVertical="true"
+        android:background="@null"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="6dp"
+        app:ccp_clickable="true"
+        app:ccp_showArrow="false"
+        app:ccp_showFlag="false"
+        app:ccp_showFullName="false"
+        app:ccp_showNameCode="false"
+        app:ccp_textGravity="CENTER"
+        app:ccp_textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/etMobileNo"
+        app:layout_constraintStart_toStartOf="@id/etMobileNo"
+        app:layout_constraintTop_toTopOf="@id/etMobileNo" />
+
+    <View
+        android:id="@+id/tvView"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/etCountryCode"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/etCountryCode"
+        app:layout_constraintStart_toEndOf="@id/etCountryCode"
+        app:layout_constraintTop_toTopOf="@id/etCountryCode" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnRequestOtp"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/bg_btn_verify_login"
+        android:paddingHorizontal="30dp"
+        android:text="Request OTP"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/etMobileNo" />
 
-        <com.hbb20.CountryCodePicker
-            android:id="@+id/etCountryCode"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:background="@null"
-            android:gravity="center_vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="6dp"
-            app:ccp_clickable="true"
-            app:ccp_showArrow="false"
-            app:ccp_showFlag="false"
-            app:ccp_showFullName="false"
-            app:ccp_showNameCode="false"
-            app:ccp_textGravity="CENTER"
-            app:ccp_textSize="14sp" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/etMobileNo"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/tvView"
-            android:background="@drawable/bg_phone_edittext"
-            android:backgroundTint="@color/white"
-            android:hint="00000 00000"
-            android:inputType="phone"
-            android:maxLength="10"
-            android:paddingHorizontal="6dp"
-            android:paddingStart="10dp"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/tvMobile" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/poppins"
-        android:includeFontPadding="false"
-        android:text="Login"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <TextView
         android:id="@+id/tvOr"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="OR"
-        android:textAlignment="center"
         android:fontFamily="@font/poppins"
+        android:text="OR"
         android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/btnLogin"
-        app:layout_constraintStart_toStartOf="@+id/btnLogin"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnRequestOtp" />
 
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:fontFamily="@font/poppins"
         android:includeFontPadding="false"
         android:text="Register"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvOr" />
 
     <ProgressBar

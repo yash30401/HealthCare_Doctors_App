@@ -78,7 +78,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             findNavController().navigate(R.id.action_loginFragment_to_authFragment)
         }
 
-        binding.btnLogin.setOnClickListener {
+        binding.btnRequestOtp.setOnClickListener {
             val phoneNumberValidation =  validateMobileNumber(binding.etMobileNo.text.toString())
             phoneNumberEventsHandle(phoneNumberValidation)
         }
@@ -107,7 +107,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun sendVerificationCodeToPhoneNumber() {
         binding.progressBar.visibility =View.VISIBLE
         binding.btnRegister.isEnabled = false
-        binding.btnLogin.isEnabled = false
+        binding.btnRequestOtp.isEnabled = false
 
         val phoneNumber = "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
 
@@ -124,7 +124,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                 .show()
                             binding.progressBar.visibility = View.GONE
                             binding.btnRegister.isEnabled = true
-                            binding.btnLogin.isEnabled = true
+                            binding.btnRequestOtp.isEnabled = true
                         }
                     }
 
@@ -137,7 +137,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             Toast.makeText(context, "reCaptcha Problem", Toast.LENGTH_SHORT).show()
                             binding.progressBar.visibility = View.GONE
                             binding.btnRegister.isEnabled = true
-                            binding.btnLogin.isEnabled = true
+                            binding.btnRequestOtp.isEnabled = true
                         }
                     }
 
@@ -150,7 +150,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             Toast.makeText(context, "Too many requests", Toast.LENGTH_SHORT).show()
                             binding.progressBar.visibility = View.GONE
                             binding.btnRegister.isEnabled = true
-                            binding.btnLogin.isEnabled = true
+                            binding.btnRequestOtp.isEnabled = true
                         }
                     }
 
@@ -195,7 +195,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         withContext(Dispatchers.Main) {
                             binding.progressBar.visibility = View.GONE
                             binding.btnRegister.isEnabled = true
-                            binding.btnLogin.isEnabled = true
+                            binding.btnRequestOtp.isEnabled = true
                         }
                     }
 
