@@ -100,7 +100,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     bottomNav.startAnimation(bottomAnim)
 
                     viewModel.signout()
-                    findNavController().navigate(R.id.action_homeFragment_to_authFragment)
+                    findNavController().navigate(R.id.action_homeFragment_to_loginFragment)
                     true
                 }
                 // Add more navigation items and their handling
