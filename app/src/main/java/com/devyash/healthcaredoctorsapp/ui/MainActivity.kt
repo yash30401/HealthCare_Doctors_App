@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.navController
 
         binding.bottomNav.setupWithNavController(navController)
+        hideBottomNavOnAuthFragment()
 
         Firebase.initialize(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
@@ -44,6 +45,35 @@ class MainActivity : AppCompatActivity() {
             PlayIntegrityAppCheckProviderFactory.getInstance(),
         )
 
+        binding.bottomNav.setOnNavigationItemSelectedListener {menuItem->
+            when(menuItem.itemId){
+                R.id.home -> {
+                    navController.navigate(R.id.homeFragment)
+                    true
+                }
+
+                R.id.chatFragment -> {
+                    navController.navigate(R.id.chatFragment)
+                    true
+                }
+
+                R.id.profileFrament -> {
+                    navController.navigate(R.id.profileFrament)
+                    true
+                }
+
+                else -> {
+                    false
+                }
+
+            }
+
+        }
+
+    }
+
+    private fun hideBottomNavOnAuthFragment() {
+        TODO("Not yet implemented")
     }
 
     override fun onBackPressed() {
