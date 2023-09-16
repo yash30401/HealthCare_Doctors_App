@@ -3,6 +3,7 @@ package com.devyash.healthcaredoctorsapp.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -73,7 +74,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hideBottomNavOnAuthFragment() {
-        TODO("Not yet implemented")
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+
+            if (destination.id == R.id.authFragment || destination.id == R.id.otpFragment) {
+                binding.bottomNav.visibility = View.GONE
+            } else {
+                binding.bottomNav.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onBackPressed() {
