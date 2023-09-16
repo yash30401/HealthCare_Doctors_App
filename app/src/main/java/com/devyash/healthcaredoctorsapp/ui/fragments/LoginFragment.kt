@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentLoginBinding
+import com.devyash.healthcaredoctorsapp.models.ContactInfo
+import com.devyash.healthcaredoctorsapp.models.DoctorData
 import com.devyash.healthcaredoctorsapp.models.ResendTokenModelClass
 import com.devyash.healthcaredoctorsapp.others.Constants
 import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallBackSealedClass
@@ -67,7 +69,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentLoginBinding.bind(view)
@@ -79,7 +80,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
         binding.btnRequestOtp.setOnClickListener {
-            val phoneNumberValidation =  validateMobileNumber(binding.etMobileNo.text.toString())
+            val phoneNumberValidation = validateMobileNumber(binding.etMobileNo.text.toString())
             phoneNumberEventsHandle(phoneNumberValidation)
         }
     }
@@ -88,16 +89,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         if (number.isEmpty()) PhoneNumberValidation.EMPTY else PhoneNumberValidation.SUCCESS
 
     private fun phoneNumberEventsHandle(phoneNumberValidation: PhoneNumberValidation) {
-        when(phoneNumberValidation){
+        when (phoneNumberValidation) {
             PhoneNumberValidation.SUCCESS -> {
                 binding.progressBar.visibility = View.VISIBLE
                 sendVerificationCodeToPhoneNumber()
             }
+
             PhoneNumberValidation.EMPTY -> {
                 binding.progressBar.visibility = View.GONE
                 Toast.makeText(context, "Please Enter Your Mobile Number", Toast.LENGTH_SHORT)
                     .show()
             }
+
             PhoneNumberValidation.WRONGFORMAT -> {
                 binding.progressBar.visibility = View.GONE
             }
@@ -105,11 +108,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun sendVerificationCodeToPhoneNumber() {
-        binding.progressBar.visibility =View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
         binding.btnRegister.isEnabled = false
         binding.btnRequestOtp.isEnabled = false
 
-        val phoneNumber = "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
+        val phoneNumber =
+            "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
 
         GlobalScope.launch(Dispatchers.IO) {
             phoneAuthCallback.callbackFlow?.collect {
@@ -175,7 +179,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                             LoginFragmentDirections.actionLoginFragmentToOtpFragment(
                                 it.verificationId.toString(),
                                 phoneNumber,
-                                ResendTokenModelClass(resendToken)
+                                ResendTokenModelClass(resendToken),
+                                DoctorData("", "", "", 0, 0, ContactInfo("", "", ""), 0, "","",
+                                    emptyList(), emptyList(),"",""
+                                )
                             )
                         withContext(Dispatchers.Main) {
                             findNavController().navigate(action)

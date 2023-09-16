@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentOtpBinding
+import com.devyash.healthcaredoctorsapp.models.DoctorData
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.others.Constants.COUNTDOWNTIMEINMINUTE
 import com.devyash.healthcaredoctorsapp.others.Constants.TAG
@@ -195,7 +196,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 }
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {
-                        findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
+                        val action= OtpFragmentDirections.actionOtpFragmentToHomeFragment(args.doctorData)
+                        findNavController().navigate(action)
                         countDownTimer.cancel()
                     }
                 }
@@ -208,6 +210,8 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
         }
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

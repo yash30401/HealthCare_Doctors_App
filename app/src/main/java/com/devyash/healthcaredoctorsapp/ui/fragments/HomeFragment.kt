@@ -10,22 +10,33 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
+import com.devyash.healthcaredoctorsapp.models.DoctorData
+import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
+import com.devyash.healthcaredoctorsapp.others.Constants.TAG
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -42,6 +53,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+
+    val args:HomeFragmentArgs by navArgs()
 
 
     override fun onCreateView(
@@ -118,6 +131,36 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         _binding = FragmentHomeBinding.bind(view)
 
         setupNavigationHeader()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            addDoctorDataToFirestore(args.doctorData)
+        }
+    }
+
+
+    private suspend fun addDoctorDataToFirestore(doctorData: DoctorData) {
+        viewModel?.addDoctorDataToFirestore(doctorData)
+
+        viewModel?.doctorDataFlow?.collect{it->
+            when(it){
+                is NetworkResult.Error -> {
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is NetworkResult.Loading -> {
+                    Log.d(Constants.TAG,"LOADING")
+                }
+                is NetworkResult.Success -> {
+                    withContext(Dispatchers.Main){
+                        Toast.makeText(requireContext(), it.data.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else ->{
+                    Log.d(TAG,"Adding data to firestore")
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
