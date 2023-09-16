@@ -11,7 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentAuthBinding
+import com.devyash.healthcaredoctorsapp.models.ContactInfo
+import com.devyash.healthcaredoctorsapp.models.DoctorData
 import com.devyash.healthcaredoctorsapp.models.ResendTokenModelClass
+import com.devyash.healthcaredoctorsapp.models.ReviewsAndRatings
 import com.devyash.healthcaredoctorsapp.others.Constants.AUTHVERIFICATIONTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.FACEBOOKTEST
 import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallBackSealedClass
@@ -121,16 +124,18 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         if (number.isEmpty()) PhoneNumberValidation.EMPTY else PhoneNumberValidation.SUCCESS
 
     private fun phoneNoEventsHandle(phoneNumberValidation: PhoneNumberValidation) {
-        when(phoneNumberValidation){
+        when (phoneNumberValidation) {
             PhoneNumberValidation.SUCCESS -> {
                 binding.progressBar.visibility = View.VISIBLE
                 sendVerificationCodeToPhoneNumber()
             }
+
             PhoneNumberValidation.EMPTY -> {
                 binding.progressBar.visibility = View.GONE
                 Toast.makeText(context, "Please Enter Your Mobile Number", Toast.LENGTH_SHORT)
                     .show()
             }
+
             PhoneNumberValidation.WRONGFORMAT -> {
                 binding.progressBar.visibility = View.GONE
             }
@@ -138,26 +143,49 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
     }
 
     private fun sendVerificationCodeToPhoneNumber() {
-        binding.progressBar.visibility =View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
         binding.btnRegister.isEnabled = false
 
-        val phoneNumber = "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
+        val phoneNumber =
+            "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
+
+        val etMobileNo = binding.etMobileNo.text.toString()
+        val fullName = binding.tilFullNameLayout.editText?.text.toString()
+        val specialization = binding.tilSpecializationLayout.editText?.text.toString()
+        val about = binding.tilAboutLayout.editText?.text.toString()
+        val city = binding.tilCityLayout.editText?.text.toString()
+        val address = binding.tilAddressLayout.editText?.text.toString()
+        val experience = binding.tilExperienceLayout.editText?.text.toString().toInt()
+
+        //Optional
+        val email = binding.tilEmailLayout.editText?.text.toString()
+        val website = binding.tilWebsiteLayout.editText?.text.toString()
+        val contatcInfo = ContactInfo(email, phoneNumber, website)
+
+        // Review and Rating
+        val reviewsAndRatings = listOf<ReviewsAndRatings>(ReviewsAndRatings("", "", 0.0, ""))
+
+        val servicesSize = listOfServices.size
+        val workingHours = binding.tilWorkingHoursLayout.editText?.text.toString()
+        val clinicVisit = binding.tilClinicVisitLayout.editText?.text.toString().toInt()
+        val videoConsult = binding.tilVideoConsultLayout.editText?.text.toString().toInt()
 
         GlobalScope.launch(Dispatchers.IO) {
-            phoneAuthCallback.callbackFlow?.collect{
-                when(it){
+            phoneAuthCallback.callbackFlow?.collect {
+                when (it) {
                     is PhoneAuthCallBackSealedClass.FIREBASEAUTHINVALIDCREDENTIALSEXCEPTION -> {
                         Log.d(
                             AUTHVERIFICATIONTAG,
                             "onVerificationFailed: ${it.firebaseAuthInvalidCredentialsException}"
                         )
-                        withContext(Dispatchers.Main){
+                        withContext(Dispatchers.Main) {
                             Toast.makeText(context, "Invalid Credentials!", Toast.LENGTH_SHORT)
                                 .show()
                             binding.progressBar.visibility = View.GONE
                             binding.btnRegister.isEnabled = true
                         }
                     }
+
                     is PhoneAuthCallBackSealedClass.FIREBASEAUTHMISSINGACTIVITYFORRECAPTCHAEXCEPTION -> {
                         Log.d(
                             AUTHVERIFICATIONTAG,
@@ -169,6 +197,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                             binding.btnRegister.isEnabled = true
                         }
                     }
+
                     is PhoneAuthCallBackSealedClass.FIREBASETOOMANYREQUESTSEXCEPTION -> {
                         Log.d(
                             AUTHVERIFICATIONTAG,
@@ -180,37 +209,55 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                             binding.btnRegister.isEnabled = true
                         }
                     }
+
                     is PhoneAuthCallBackSealedClass.ONCODESENT -> {
                         Log.d("AUTHVERIFICATION", "onCodeSent:${it.verificationId}")
 
 
-                            suspendCancellableCoroutine { continuation ->
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    val result = async {
-                                        storedVerificationId = it.verificationId.toString()
-                                        resendToken = it.token!!
-                                    }
-                                    continuation.resume(result.await(), {
-                                        Log.d(FACEBOOKTEST, it.message.toString())
-                                    }) // Resume the coroutine with the result
+                        suspendCancellableCoroutine { continuation ->
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val result = async {
+                                    storedVerificationId = it.verificationId.toString()
+                                    resendToken = it.token!!
                                 }
+                                continuation.resume(result.await(), {
+                                    Log.d(FACEBOOKTEST, it.message.toString())
+                                }) // Resume the coroutine with the result
                             }
+                        }
 
 
-                            val action =
-                                AuthFragmentDirections.actionAuthFragmentToOtpFragment(
-                                    it.verificationId.toString(),
-                                    phoneNumber,
-                                    ResendTokenModelClass(resendToken)
+                        val action =
+                            AuthFragmentDirections.actionAuthFragmentToOtpFragment(
+                                it.verificationId.toString(),
+                                phoneNumber,
+                                ResendTokenModelClass(resendToken),
+                                DoctorData(
+                                    about,
+                                    address,
+                                    city,
+                                    videoConsult,
+                                    clinicVisit,
+                                    contatcInfo,
+                                    experience,
+                                    fullName,
+                                    "",
+                                    reviewsAndRatings,
+                                    listOfServices,
+                                    specialization,
+                                    workingHours
                                 )
-                            withContext(Dispatchers.Main) {
-                                findNavController().navigate(action)
-                            }
+                            )
+                        withContext(Dispatchers.Main) {
+                            findNavController().navigate(action)
+                        }
 
                     }
+
                     is PhoneAuthCallBackSealedClass.ONVERIFICATIONCOMPLETED -> {
                         Log.d(AUTHVERIFICATIONTAG, "Verification Completed")
                     }
+
                     is PhoneAuthCallBackSealedClass.ONVERIFICATIONFAILED -> {
                         Log.d(AUTHVERIFICATIONTAG, "onVerificationFailed: ${it.firebaseException}")
                         withContext(Dispatchers.Main) {
@@ -218,7 +265,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                             binding.btnRegister.isEnabled = true
                         }
                     }
-                    else->{
+
+                    else -> {
                         Log.d(
                             AUTHVERIFICATIONTAG,
                             "Verification Error: ${it?.firebaseException}"
@@ -230,7 +278,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
         val options = PhoneAuthOptions.newBuilder(Firebase.auth)
             .setPhoneNumber(phoneNumber)
-            .setTimeout(60L,TimeUnit.SECONDS)
+            .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(requireActivity())
             .setCallbacks(callback)
             .build()

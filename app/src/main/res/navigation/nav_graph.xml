@@ -42,6 +42,9 @@
         <action
             android:id="@+id/action_otpFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <argument
+            android:name="doctorData"
+            app:argType="com.devyash.healthcaredoctorsapp.models.DoctorData" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
