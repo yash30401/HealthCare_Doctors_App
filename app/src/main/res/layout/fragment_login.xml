@@ -12,16 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_centerVertical="true"
-        android:layout_marginTop="25dp"
         android:layout_toEndOf="@+id/tvView"
         android:background="@drawable/bg_phone_edittext"
         android:hint="00000 00000"
         android:inputType="phone"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:maxLength="10"
         android:paddingHorizontal="6dp"
+        android:layout_marginTop="50dp"
         android:paddingStart="80dp"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/tvMobile" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.hbb20.CountryCodePicker
         android:id="@+id/etCountryCode"
@@ -88,9 +90,9 @@
         android:id="@+id/btnRegister"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins"
+
         android:includeFontPadding="false"
-        android:text="Register"
+        android:text="REGISTER"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         app:layout_constraintEnd_toEndOf="parent"
