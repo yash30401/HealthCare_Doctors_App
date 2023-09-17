@@ -22,6 +22,7 @@ class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth,
         return flow {
             try {
                 val result = firebaseAuth.signInWithCredential(credential).await()
+//                if(result.additionalUserInfo?.isNewUser == true){}
                 emit(NetworkResult.Success(result.user!!))
             } catch (e: Exception) {
                emit(NetworkResult.Error(e.message))

@@ -11,4 +11,7 @@ object Constants {
 
     // Coundown Time
     const val COUNTDOWNTIMEINMINUTE = 1
+
+    // Firestore
+    const val FIRESTOREDATASTATUS = "FIRESTOREDATASTATUS"
 }

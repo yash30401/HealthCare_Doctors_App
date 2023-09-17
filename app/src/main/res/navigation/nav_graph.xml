@@ -57,9 +57,6 @@
         <action
             android:id="@+id/action_homeFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
-        <argument
-            android:name="doctorData"
-            app:argType="com.devyash.healthcaredoctorsapp.models.DoctorData" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"

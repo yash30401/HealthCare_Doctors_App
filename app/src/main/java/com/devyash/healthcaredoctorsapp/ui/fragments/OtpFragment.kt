@@ -17,10 +17,13 @@ import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentOtpBinding
 import com.devyash.healthcaredoctorsapp.models.DoctorData
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants
 import com.devyash.healthcaredoctorsapp.others.Constants.COUNTDOWNTIMEINMINUTE
+import com.devyash.healthcaredoctorsapp.others.Constants.FIRESTOREDATASTATUS
 import com.devyash.healthcaredoctorsapp.others.Constants.TAG
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
@@ -29,6 +32,7 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -38,22 +42,25 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class OtpFragment : Fragment(R.layout.fragment_otp) {
 
-    private var _binding:FragmentOtpBinding?=null
+    private var _binding: FragmentOtpBinding? = null
     private val binding get() = _binding!!
 
-    private val args:OtpFragmentArgs  by navArgs()
+    private val args: OtpFragmentArgs by navArgs()
 
     private lateinit var countDownTimer: CountDownTimer
-    var isTimerRunning:Boolean? = false
+    var isTimerRunning: Boolean? = false
     var currentCounterTimeInMilliSeconds = 0L
 
-    private lateinit var phoneNumber:String
+    private lateinit var phoneNumber: String
 
     @Inject
     lateinit var phoneAuthCallback: PhoneAuthCallback
     private lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
-    private val viewModel:AuthViewModel by viewModels<AuthViewModel>()
+    private val viewModel: AuthViewModel by viewModels<AuthViewModel>()
+
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,7 +94,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         binding.btnVerifyOtp.setOnClickListener {
             val otp = binding.etOtpPin.editableText.toString()
             val verificationId = args.verificationId
-            if(otp!=""){
+            if (otp != "") {
                 val credentials = PhoneAuthProvider.getCredential(
                     verificationId,
                     otp
@@ -96,29 +103,29 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 lifecycleScope.launch(Dispatchers.IO) {
                     siginWithPhoneNumber(credentials)
                 }
-            }else{
+            } else {
                 Toast.makeText(requireContext(), "Please Enter Otp!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
 
-
-    private fun setupPhoneNumberTextView(){
+    private fun setupPhoneNumberTextView() {
         phoneNumber = args.phoneNumber
-        val hiddenPhoneNumberText = "+91${phoneNumber.get(3)}${phoneNumber.get(4)}******${phoneNumber.get(11)}${
-            phoneNumber.get(12)
-        }"
+        val hiddenPhoneNumberText =
+            "+91${phoneNumber.get(3)}${phoneNumber.get(4)}******${phoneNumber.get(11)}${
+                phoneNumber.get(12)
+            }"
         binding.tvPhoneNo.text = hiddenPhoneNumberText
     }
 
-    private fun editPhoneNumberAndNavigateBackToAuthScreen(){
+    private fun editPhoneNumberAndNavigateBackToAuthScreen() {
         findNavController().navigate(R.id.action_otpFragment_to_authFragment)
     }
 
     private fun startOtpResendTimer() {
         currentCounterTimeInMilliSeconds = COUNTDOWNTIMEINMINUTE.toLong() * 60000L
-        countDownTimer = object :CountDownTimer(currentCounterTimeInMilliSeconds,1000){
+        countDownTimer = object : CountDownTimer(currentCounterTimeInMilliSeconds, 1000) {
             override fun onTick(p0: Long) {
                 currentCounterTimeInMilliSeconds = p0
                 updateTimerUri()
@@ -151,56 +158,69 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     }
 
     private fun resendOtpToPhoneNumber() {
-       if(isTimerRunning == true){
-           Log.d(TAG, "Timer is Running")
-       }else{
-           val resendToken = args.resendToken.resendToken
+        if (isTimerRunning == true) {
+            Log.d(TAG, "Timer is Running")
+        } else {
+            val resendToken = args.resendToken.resendToken
             val options = PhoneAuthOptions.newBuilder(Firebase.auth)
                 .setPhoneNumber(phoneNumber)
-                .setTimeout(60L,TimeUnit.SECONDS)
+                .setTimeout(60L, TimeUnit.SECONDS)
                 .setActivity(requireActivity())
                 .setCallbacks(callbacks)
                 .setForceResendingToken(resendToken!!)
                 .build()
-           PhoneAuthProvider.verifyPhoneNumber(options)
+            PhoneAuthProvider.verifyPhoneNumber(options)
 
-           binding.tvResend.text = "Resend OTP in: "
-           binding.tvResend.setTextColor(
-               ContextCompat.getColor(
-                   requireContext(),
-                   R.color.black
-               )
-           )
-           binding.tvTimer.visibility = View.VISIBLE
-           startOtpResendTimer()
-       }
+            binding.tvResend.text = "Resend OTP in: "
+            binding.tvResend.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.black
+                )
+            )
+            binding.tvTimer.visibility = View.VISIBLE
+            startOtpResendTimer()
+        }
     }
 
     suspend private fun siginWithPhoneNumber(credentials: PhoneAuthCredential) {
         viewModel?.signInWithPhoneNumber(credentials)
         delay(3000)
 
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             binding.progressBar.visibility = View.GONE
         }
 
-        viewModel?.loginFlow?.collect{it->
-            when(it){
+        viewModel?.loginFlow?.catch {
+
+            Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d(FIRESTOREDATASTATUS, it?.message.toString())
+
+        }?.collect { it ->
+            when (it) {
                 is NetworkResult.Error -> {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+                        Log.d(FIRESTOREDATASTATUS, it?.message.toString())
                     }
                 }
+
                 is NetworkResult.Loading -> {
-                    Log.d(TAG,"Loading")
+                    Log.d(TAG, "Loading")
                 }
+
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {
-                        val action= OtpFragmentDirections.actionOtpFragmentToHomeFragment(args.doctorData)
-                        findNavController().navigate(action)
+                        findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
                         countDownTimer.cancel()
                     }
+
+                    if (firebaseAuth.uid != null) {
+                        Log.d(FIRESTOREDATASTATUS, "UI id is not null")
+                        addDoctorDataToFirestore(args.doctorData)
+                    }
                 }
+
                 else -> {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
@@ -211,6 +231,34 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
+    private suspend fun addDoctorDataToFirestore(doctorData: DoctorData) {
+        viewModel?.addDoctorDataToFirestore(doctorData)
+
+        viewModel?.doctorDataFlow?.collect { it ->
+            when (it) {
+                is NetworkResult.Error -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                is NetworkResult.Loading -> {
+                    Log.d(Constants.TAG, "LOADING")
+                }
+
+                is NetworkResult.Success -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), it.data.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+
+                else -> {
+                    Log.d(TAG, "Adding data to firestore")
+                }
+            }
+        }
+    }
 
 
     override fun onDestroy() {

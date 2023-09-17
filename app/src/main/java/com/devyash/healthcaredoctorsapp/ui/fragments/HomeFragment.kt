@@ -54,8 +54,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
-    val args:HomeFragmentArgs by navArgs()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,6 +74,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val toggle = ActionBarDrawerToggle(
             activity, drawerLayout, toolbar, 0, R.string.app_name
         )
+
+        Log.d("FIRESBASEUID",firebaseAuth.uid.toString())
 
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -132,36 +132,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         setupNavigationHeader()
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            addDoctorDataToFirestore(args.doctorData)
-        }
     }
 
-
-    private suspend fun addDoctorDataToFirestore(doctorData: DoctorData) {
-        viewModel?.addDoctorDataToFirestore(doctorData)
-
-        viewModel?.doctorDataFlow?.collect{it->
-            when(it){
-                is NetworkResult.Error -> {
-                    withContext(Dispatchers.Main){
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    }
-                }
-                is NetworkResult.Loading -> {
-                    Log.d(Constants.TAG,"LOADING")
-                }
-                is NetworkResult.Success -> {
-                    withContext(Dispatchers.Main){
-                        Toast.makeText(requireContext(), it.data.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                }
-                else ->{
-                    Log.d(TAG,"Adding data to firestore")
-                }
-            }
-        }
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
