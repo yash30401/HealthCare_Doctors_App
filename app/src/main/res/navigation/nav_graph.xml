@@ -45,6 +45,9 @@
         <argument
             android:name="doctorData"
             app:argType="com.devyash.healthcaredoctorsapp.models.DoctorData" />
+        <argument
+            android:name="loginOrRegister"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"

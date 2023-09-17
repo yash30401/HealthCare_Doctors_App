@@ -101,7 +101,12 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 )
                 binding.progressBar.visibility = View.VISIBLE
                 lifecycleScope.launch(Dispatchers.IO) {
-                    siginWithPhoneNumber(credentials)
+                    if(args.loginOrRegister == "Login"){
+                        siginWithPhoneNumber(credentials)
+                    }else if(args.loginOrRegister == "Register"){
+                        sigUpWithPhoneNumber(credentials)
+                    }
+
                 }
             } else {
                 Toast.makeText(requireContext(), "Please Enter Otp!", Toast.LENGTH_SHORT).show()
@@ -210,14 +215,53 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 }
 
                 is NetworkResult.Success -> {
-                    withContext(Dispatchers.Main) {
-                        findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
-                        countDownTimer.cancel()
-                    }
+                        withContext(Dispatchers.Main){
+                            binding.progressBar.visibility = View.GONE
+                            findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
+                            countDownTimer.cancel()
+                        }
 
-                    if (firebaseAuth.uid != null) {
-                        Log.d(FIRESTOREDATASTATUS, "UId is not null")
-                        addDoctorDataToFirestore(args.doctorData)
+                }
+
+                else -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+        }
+    }
+
+    suspend private fun sigUpWithPhoneNumber(credentials: PhoneAuthCredential) {
+        viewModel?.signInWithPhoneNumber(credentials)
+        delay(3000)
+
+        withContext(Dispatchers.Main) {
+            binding.progressBar.visibility = View.GONE
+        }
+
+        viewModel?.loginFlow?.catch {
+
+            Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+            Log.d(FIRESTOREDATASTATUS, it?.message.toString())
+
+        }?.collect { it ->
+            when (it) {
+                is NetworkResult.Error -> {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+                        Log.d(FIRESTOREDATASTATUS, it?.message.toString())
+                    }
+                }
+
+                is NetworkResult.Loading -> {
+                    Log.d(TAG, "Loading")
+                }
+
+                is NetworkResult.Success -> {
+                    lifecycleScope.launch(Dispatchers.IO){
+                        checkIfUserExist()
                     }
                 }
 
@@ -228,6 +272,61 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 }
             }
 
+        }
+    }
+
+    private suspend fun checkIfUserExist() {
+        withContext(Dispatchers.Main) {
+            binding.progressBar.visibility = View.VISIBLE
+        }
+        viewModel.checkIfUserAlreadyExist()
+        Log.d(FIRESTOREDATASTATUS,"Entering")
+        viewModel?.userExistFlow?.collect{
+            when(it){
+                is NetworkResult.Error -> {
+                    withContext(Dispatchers.Main){
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+                        Log.d(Constants.FIRESTOREDATASTATUS, it?.message.toString())
+                    }
+                }
+                is NetworkResult.Loading -> {
+                    withContext(Dispatchers.Main){
+                        Log.d(FIRESTOREDATASTATUS, "Loading")
+                    }
+                }
+                is NetworkResult.Success -> {
+                    Log.d(FIRESTOREDATASTATUS, "Success")
+                    if(it.data == true){
+                        withContext(Dispatchers.Main) {
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(
+                                context,
+                                "User with this phone number already exists.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        }
+                        viewModel.signout()
+                    }else{
+                        lifecycleScope.launch(Dispatchers.IO){
+                            withContext(Dispatchers.Main){
+                                binding.progressBar.visibility = View.GONE
+                                findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
+                                countDownTimer.cancel()
+                                if (firebaseAuth.uid != null) {
+                                    Log.d(FIRESTOREDATASTATUS, "UId is not null")
+                                    addDoctorDataToFirestore(args.doctorData)
+                                }
+                            }
+                        }
+                    }
+
+                }
+                else -> {
+                    Log.d(FIRESTOREDATASTATUS, "ELSE BLOCK")
+                }
+            }
         }
     }
 

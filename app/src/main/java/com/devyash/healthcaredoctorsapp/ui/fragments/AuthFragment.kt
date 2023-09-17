@@ -134,9 +134,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         when (phoneNumberValidation) {
             PhoneNumberValidation.SUCCESS -> {
                 binding.progressBar.visibility = View.VISIBLE
-                lifecycleScope.launch(Dispatchers.IO) {
-                    checkIfUserExist()
-                }
+                sendVerificationCodeToPhoneNumber()
             }
 
             PhoneNumberValidation.EMPTY -> {
@@ -151,44 +149,6 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         }
     }
 
-    private suspend fun checkIfUserExist() {
-         val phoneNumber = "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
-        binding.progressBar.visibility = View.VISIBLE
-        viewmodel.checkIfUserAlreadyExist(phoneNumber)
-        Log.d(FIRESTOREDATASTATUS,"Entering")
-        viewmodel?.userExistFlow?.collect{
-            when(it){
-                is NetworkResult.Error -> {
-                    withContext(Dispatchers.Main){
-                        binding.progressBar.visibility = View.GONE
-                        Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
-                        Log.d(Constants.FIRESTOREDATASTATUS, it?.message.toString())
-                    }
-                }
-                is NetworkResult.Loading -> {
-                    withContext(Dispatchers.Main){
-                        Log.d(FIRESTOREDATASTATUS, "Loading")
-                    }
-                }
-                is NetworkResult.Success -> {
-                    Log.d(FIRESTOREDATASTATUS, "Success")
-                    if(it.data == true){
-                        withContext(Dispatchers.Main){
-                            binding.progressBar.visibility = View.GONE
-                            Toast.makeText(context, "User with this phone number already exists.", Toast.LENGTH_SHORT).show()
-                        }
-                    }else{
-                        binding.progressBar.visibility = View.GONE
-                        sendVerificationCodeToPhoneNumber()
-                    }
-
-                }
-                else -> {
-                    Log.d(FIRESTOREDATASTATUS, "ELSE BLOCK")
-                }
-            }
-        }
-    }
 
     private fun sendVerificationCodeToPhoneNumber() {
         binding.progressBar.visibility = View.VISIBLE
@@ -294,7 +254,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                                     listOfServices,
                                     specialization,
                                     workingHours
-                                )
+                                ),
+                                "Register"
                             )
                         withContext(Dispatchers.Main) {
                             findNavController().navigate(action)

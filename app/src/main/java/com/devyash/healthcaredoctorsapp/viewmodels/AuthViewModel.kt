@@ -35,11 +35,11 @@ class AuthViewModel @Inject constructor(private var repository: AuthRepository) 
         }
     }
 
-    fun checkIfUserAlreadyExist(phoneNumber:String) = viewModelScope.launch {
+    fun checkIfUserAlreadyExist() = viewModelScope.launch {
         _userExistFlow.value = NetworkResult.Loading()
 
         try {
-            val result = repository.checkIfUserAlreadyExist(phoneNumber)
+            val result = repository.checkIfUserAlreadyExist()
             result.catch { e->
                 _userExistFlow.value = NetworkResult.Error(e.message)
             }.collect{data->

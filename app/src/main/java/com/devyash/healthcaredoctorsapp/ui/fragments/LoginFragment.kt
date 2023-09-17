@@ -182,7 +182,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                 ResendTokenModelClass(resendToken),
                                 DoctorData("", "", "", 0, 0, ContactInfo("", "", ""), 0, "","",
                                     emptyList(), emptyList(),"",""
-                                )
+                                ),
+                                "Login"
                             )
                         withContext(Dispatchers.Main) {
                             findNavController().navigate(action)
