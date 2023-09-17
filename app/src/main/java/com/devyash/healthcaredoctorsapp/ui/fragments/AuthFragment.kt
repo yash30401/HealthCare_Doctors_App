@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.FragmentAuthBinding
@@ -15,11 +17,15 @@ import com.devyash.healthcaredoctorsapp.models.ContactInfo
 import com.devyash.healthcaredoctorsapp.models.DoctorData
 import com.devyash.healthcaredoctorsapp.models.ResendTokenModelClass
 import com.devyash.healthcaredoctorsapp.models.ReviewsAndRatings
+import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants
 import com.devyash.healthcaredoctorsapp.others.Constants.AUTHVERIFICATIONTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.FACEBOOKTEST
+import com.devyash.healthcaredoctorsapp.others.Constants.FIRESTOREDATASTATUS
 import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallBackSealedClass
 import com.devyash.healthcaredoctorsapp.others.PhoneNumberValidation
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
+import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthOptions
@@ -57,6 +63,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     private lateinit var callback: PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
+    private val viewmodel:AuthViewModel by viewModels<AuthViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -127,7 +134,9 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         when (phoneNumberValidation) {
             PhoneNumberValidation.SUCCESS -> {
                 binding.progressBar.visibility = View.VISIBLE
-                sendVerificationCodeToPhoneNumber()
+                lifecycleScope.launch(Dispatchers.IO) {
+                    checkIfUserExist()
+                }
             }
 
             PhoneNumberValidation.EMPTY -> {
@@ -138,6 +147,45 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
             PhoneNumberValidation.WRONGFORMAT -> {
                 binding.progressBar.visibility = View.GONE
+            }
+        }
+    }
+
+    private suspend fun checkIfUserExist() {
+         val phoneNumber = "${binding.etCountryCode.selectedCountryCodeWithPlus}${binding.etMobileNo.text.toString()}"
+        binding.progressBar.visibility = View.VISIBLE
+        viewmodel.checkIfUserAlreadyExist(phoneNumber)
+        Log.d(FIRESTOREDATASTATUS,"Entering")
+        viewmodel?.userExistFlow?.collect{
+            when(it){
+                is NetworkResult.Error -> {
+                    withContext(Dispatchers.Main){
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
+                        Log.d(Constants.FIRESTOREDATASTATUS, it?.message.toString())
+                    }
+                }
+                is NetworkResult.Loading -> {
+                    withContext(Dispatchers.Main){
+                        Log.d(FIRESTOREDATASTATUS, "Loading")
+                    }
+                }
+                is NetworkResult.Success -> {
+                    Log.d(FIRESTOREDATASTATUS, "Success")
+                    if(it.data == true){
+                        withContext(Dispatchers.Main){
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(context, "User with this phone number already exists.", Toast.LENGTH_SHORT).show()
+                        }
+                    }else{
+                        binding.progressBar.visibility = View.GONE
+                        sendVerificationCodeToPhoneNumber()
+                    }
+
+                }
+                else -> {
+                    Log.d(FIRESTOREDATASTATUS, "ELSE BLOCK")
+                }
             }
         }
     }

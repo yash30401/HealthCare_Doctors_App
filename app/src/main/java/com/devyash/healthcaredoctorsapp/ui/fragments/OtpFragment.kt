@@ -216,7 +216,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     }
 
                     if (firebaseAuth.uid != null) {
-                        Log.d(FIRESTOREDATASTATUS, "UI id is not null")
+                        Log.d(FIRESTOREDATASTATUS, "UId is not null")
                         addDoctorDataToFirestore(args.doctorData)
                     }
                 }

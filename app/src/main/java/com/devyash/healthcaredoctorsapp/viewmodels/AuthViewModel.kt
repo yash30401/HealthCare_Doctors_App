@@ -18,6 +18,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(private var repository: AuthRepository) : ViewModel() {
 
+    private val _userExistFlow = MutableStateFlow<NetworkResult<Boolean>?>(null)
+    val userExistFlow: StateFlow<NetworkResult<Boolean>?> = _userExistFlow
+
     private val _loginFlow = MutableStateFlow<NetworkResult<FirebaseUser>?>(null)
     val loginFlow: StateFlow<NetworkResult<FirebaseUser>?> = _loginFlow
 
@@ -32,33 +35,54 @@ class AuthViewModel @Inject constructor(private var repository: AuthRepository) 
         }
     }
 
+    fun checkIfUserAlreadyExist(phoneNumber:String) = viewModelScope.launch {
+        _userExistFlow.value = NetworkResult.Loading()
+
+        try {
+            val result = repository.checkIfUserAlreadyExist(phoneNumber)
+            result.catch { e->
+                _userExistFlow.value = NetworkResult.Error(e.message)
+            }.collect{data->
+                _userExistFlow.value = NetworkResult.Success(data.data!!)
+            }
+        }catch (e:Exception){
+            _userExistFlow.value = NetworkResult.Error(e.message)
+        }
+    }
     fun signInWithPhoneNumber(credential: PhoneAuthCredential) = viewModelScope.launch {
         _loginFlow.value = NetworkResult.Loading()
 
-        try {
-            val result = repository.signinWithPhoneNumber(credential)
-            result.catch { e->
-                _loginFlow.value = NetworkResult.Error(e.message)
-            }.collect{data->
-                _loginFlow.value = NetworkResult.Success(data.data!!)
+        val result = repository.signinWithPhoneNumber(credential)
+        result.collect { data ->
+            when (data) {
+                is NetworkResult.Error -> {
+                    _loginFlow.value = NetworkResult.Error(data.message, null)
+                }
+                is NetworkResult.Success -> {
+                    _loginFlow.value = NetworkResult.Success(data.data!!)
+                }
+
+                else -> {}
             }
-        }catch (e:Exception){
-            _loginFlow.value = NetworkResult.Error(e.message)
         }
     }
 
-    fun addDoctorDataToFirestore(data:DoctorData) = viewModelScope.launch {
+
+    fun addDoctorDataToFirestore(data: DoctorData) = viewModelScope.launch {
         _doctorDataFlow.value = NetworkResult.Loading()
 
-        try {
-            val result = repository.addDoctorDataToFirebase(data)
-            result.catch {
-                _doctorDataFlow.value = NetworkResult.Error(it.message)
-            }.collect{
-                _doctorDataFlow.value = NetworkResult.Success(it.data.toString())
+        val result = repository.addDoctorDataToFirebase(data)
+        result.collect {
+            when (it) {
+                is NetworkResult.Error -> {
+                    _doctorDataFlow.value = NetworkResult.Error(it.message)
+                }
+                is NetworkResult.Success -> {
+                    _doctorDataFlow.value = NetworkResult.Success(it.data.toString())
+                }
+
+                else -> {}
             }
-        }catch (e:Exception){
-            _doctorDataFlow.value = NetworkResult.Error(e.message)
         }
     }
 

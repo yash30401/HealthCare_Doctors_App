@@ -1,7 +1,9 @@
 package com.devyash.healthcaredoctorsapp.repositories
 
+import android.util.Log
 import com.devyash.healthcaredoctorsapp.models.DoctorData
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants
 import com.devyash.healthcaredoctorsapp.util.await
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -18,26 +20,38 @@ class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth,
 
     val currentUser:FirebaseUser?= firebaseAuth.currentUser
 
-    suspend fun signinWithPhoneNumber(credential: PhoneAuthCredential): Flow<NetworkResult<FirebaseUser>> {
-        return flow {
-            try {
-                val result = firebaseAuth.signInWithCredential(credential).await()
-//                if(result.additionalUserInfo?.isNewUser == true){}
-                emit(NetworkResult.Success(result.user!!))
-            } catch (e: Exception) {
-               emit(NetworkResult.Error(e.message))
+    suspend fun checkIfUserAlreadyExist(phoneNumber:String):Flow<NetworkResult<Boolean>>{
+        return flow<NetworkResult<Boolean>> {
+            val userExist = firebaseAuth.fetchSignInMethodsForEmail(phoneNumber).await()
+            val signInMethods = userExist?.signInMethods
+            if(signInMethods!=null && signInMethods.isNotEmpty()){
+                emit(NetworkResult.Success(true))
+                Log.d(Constants.FIRESTOREDATASTATUS,"Emiting true")
+            }else{
+                Log.d(Constants.FIRESTOREDATASTATUS,"Emiting true")
+                emit(NetworkResult.Success(false))
             }
+        }.catch {e->
+            Log.d(Constants.FIRESTOREDATASTATUS,e.message.toString())
+            emit(NetworkResult.Error(e.message,null))
+        }
+    }
+    
+    suspend fun signinWithPhoneNumber(credential: PhoneAuthCredential): Flow<NetworkResult<out FirebaseUser>> {
+        return flow {
+            val result = firebaseAuth.signInWithCredential(credential).await()
+            emit(NetworkResult.Success(result.user!!))
+        }.catch { e ->
+            NetworkResult.Error(e.message,null)
         }
     }
 
-    suspend fun addDoctorDataToFirebase(data:DoctorData):Flow<NetworkResult<String>>{
+    suspend fun addDoctorDataToFirebase(data: DoctorData): Flow<NetworkResult<String>> {
         return flow {
-            try {
-                firebaseFirestore.collection("Doctors").document(firebaseAuth.uid.toString()).set(data).await()
-                emit(NetworkResult.Success("Data Added"))
-            }catch (e:Exception){
-             emit(NetworkResult.Error(e.message))
-            }
+            firebaseFirestore.collection("Doctors").document(firebaseAuth.uid.toString()).set(data).await()
+            emit(NetworkResult.Success("Data Added"))
+        }.catch { e ->
+            NetworkResult.Error(e.message,null)
         }
     }
 
