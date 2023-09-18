@@ -68,7 +68,35 @@ class AuthRepository @Inject constructor(
     // Add doctor data to Firebase Firestore
     suspend fun addDoctorDataToFirebase(data: DoctorData): Flow<NetworkResult<String>> {
         return flow {
-            firebaseFirestore.collection("Doctors").document(firebaseAuth.uid.toString()).set(data)
+            val doctorId = firebaseAuth.uid.toString()
+            val doctorDataMap = mapOf(
+                "About" to data.About,
+                "Address" to data.Address,
+                "City" to data.City,
+                "video_consult" to data.video_consult,
+                "clinic_visit" to data.clinic_visit,
+                "Contact_Info" to mapOf(
+                    "email" to data.Contact_Info?.email,
+                    "phone_number" to data.Contact_Info?.phone_number,
+                    "website" to data.Contact_Info?.website
+                ),
+                "Experience" to data.Experience,
+                "Name" to data.Name,
+                "Profile_Pic" to data.Profile_Pic,
+                "Reviews_And_Ratings" to data.Reviews_And_Ratings?.map { review ->
+                    mapOf(
+                        "date" to review.date,
+                        "name" to review.name,
+                        "rating" to review.rating,
+                        "review" to review.review
+                    )
+                },
+                "Services" to data.Services,
+                "Specialization" to data.Specialization,
+                "Working_Hours" to data.Working_Hours
+            )
+
+            firebaseFirestore.collection("Doctors").document(doctorId).set(doctorDataMap)
                 .await()
             emit(NetworkResult.Success("Data Added"))
         }.catch { e ->
