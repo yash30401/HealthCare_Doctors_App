@@ -47,6 +47,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
     private val args: OtpFragmentArgs by navArgs()
 
+    // Variables for OTP timer
     private lateinit var countDownTimer: CountDownTimer
     var isTimerRunning: Boolean? = false
     var currentCounterTimeInMilliSeconds = 0L
@@ -76,6 +77,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
         callbacks = phoneAuthCallback.callbacks
 
+        // Set up UI elements and listeners
         setupPhoneNumberTextView()
         startOtpResendTimer()
 
@@ -100,6 +102,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     otp
                 )
                 binding.progressBar.visibility = View.VISIBLE
+                // Depending on login or registration, call the appropriate function
                 lifecycleScope.launch(Dispatchers.IO) {
                     if(args.loginOrRegister == "Login"){
                         siginWithPhoneNumber(credentials)
@@ -114,7 +117,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
-
+    // Function to set up the hidden phone number view
     private fun setupPhoneNumberTextView() {
         phoneNumber = args.phoneNumber
         val hiddenPhoneNumberText =
@@ -124,10 +127,12 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         binding.tvPhoneNo.text = hiddenPhoneNumberText
     }
 
+    // Function to navigate back to the authentication screen for editing phone number
     private fun editPhoneNumberAndNavigateBackToAuthScreen() {
         findNavController().navigate(R.id.action_otpFragment_to_authFragment)
     }
 
+    // Function to start the OTP resend timer
     private fun startOtpResendTimer() {
         currentCounterTimeInMilliSeconds = COUNTDOWNTIMEINMINUTE.toLong() * 60000L
         countDownTimer = object : CountDownTimer(currentCounterTimeInMilliSeconds, 1000) {
@@ -154,6 +159,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         isTimerRunning = true
     }
 
+    // Function to update the OTP resend timer UI
     private fun updateTimerUri() {
         val minute = (currentCounterTimeInMilliSeconds / 1000) / 60
         val seconds = (currentCounterTimeInMilliSeconds / 1000) % 60
@@ -162,6 +168,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         binding.tvTimer.text = "$minute:$formattedSeconds"
     }
 
+    // Function to resend OTP to the phone number
     private fun resendOtpToPhoneNumber() {
         if (isTimerRunning == true) {
             Log.d(TAG, "Timer is Running")
@@ -188,6 +195,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
+    // Function to sign in with the provided phone number and OTP (for login)
     suspend private fun siginWithPhoneNumber(credentials: PhoneAuthCredential) {
         viewModel?.signInWithPhoneNumber(credentials)
         delay(3000)
@@ -233,6 +241,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
+    // Function to sign up with the provided phone number and OTP (for registration)
     suspend private fun sigUpWithPhoneNumber(credentials: PhoneAuthCredential) {
         viewModel?.signInWithPhoneNumber(credentials)
         delay(3000)
@@ -275,6 +284,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
+    // Function to check if the user already exists (for registration)
     private suspend fun checkIfUserExist() {
         withContext(Dispatchers.Main) {
             binding.progressBar.visibility = View.VISIBLE
@@ -330,6 +340,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
         }
     }
 
+    // Function to add doctor data to Firestore (for registration)
     private suspend fun addDoctorDataToFirestore(doctorData: DoctorData) {
         viewModel?.addDoctorDataToFirestore(doctorData)
 

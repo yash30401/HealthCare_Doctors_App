@@ -19,9 +19,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firebaseFirestore: FirebaseFirestore) {
+class AuthRepository @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val firebaseFirestore: FirebaseFirestore
+) {
 
-    val currentUser:FirebaseUser?= firebaseAuth.currentUser
+    // Get the current authenticated user (if any)
+    val currentUser: FirebaseUser? = firebaseAuth.currentUser
+
+    // Check if a user with the same UID already exists
     suspend fun checkIfUserAlreadyExist(): Flow<NetworkResult<Boolean>> {
         return flow<NetworkResult<Boolean>> {
             val currentUser = firebaseAuth.currentUser
@@ -49,26 +55,28 @@ class AuthRepository @Inject constructor(private val firebaseAuth: FirebaseAuth,
         }.flowOn(Dispatchers.IO)
     }
 
-    
+    // Sign in with a phone number using the provided credentials
     suspend fun signinWithPhoneNumber(credential: PhoneAuthCredential): Flow<NetworkResult<out FirebaseUser>> {
         return flow {
             val result = firebaseAuth.signInWithCredential(credential).await()
             emit(NetworkResult.Success(result.user!!))
         }.catch { e ->
-            NetworkResult.Error(e.message,null)
+            NetworkResult.Error(e.message, null)
         }.flowOn(Dispatchers.IO)
     }
 
+    // Add doctor data to Firebase Firestore
     suspend fun addDoctorDataToFirebase(data: DoctorData): Flow<NetworkResult<String>> {
         return flow {
-            firebaseFirestore.collection("Doctors").document(firebaseAuth.uid.toString()).set(data).await()
+            firebaseFirestore.collection("Doctors").document(firebaseAuth.uid.toString()).set(data)
+                .await()
             emit(NetworkResult.Success("Data Added"))
         }.catch { e ->
-            NetworkResult.Error(e.message,null)
+            NetworkResult.Error(e.message, null)
         }.flowOn(Dispatchers.IO)
     }
 
-    fun logout(){
+    fun logout() {
         firebaseAuth.signOut()
     }
 
