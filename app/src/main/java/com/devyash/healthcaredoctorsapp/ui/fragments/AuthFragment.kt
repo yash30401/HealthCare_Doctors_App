@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,6 +24,7 @@ import com.devyash.healthcaredoctorsapp.others.Constants
 import com.devyash.healthcaredoctorsapp.others.Constants.AUTHVERIFICATIONTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.FACEBOOKTEST
 import com.devyash.healthcaredoctorsapp.others.Constants.FIRESTOREDATASTATUS
+import com.devyash.healthcaredoctorsapp.others.Constants.TAG
 import com.devyash.healthcaredoctorsapp.others.PhoneAuthCallBackSealedClass
 import com.devyash.healthcaredoctorsapp.others.PhoneNumberValidation
 import com.devyash.healthcaredoctorsapp.utils.PhoneAuthCallback
@@ -65,6 +68,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     private val viewmodel:AuthViewModel by viewModels<AuthViewModel>()
 
+    private var isProfilePhotoSelected:Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,6 +85,20 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
         callback = phoneAuthCallback.callbacks
         listOfServices = emptyList<String>().toMutableList()
+
+        val pickProfilePhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()){uri->
+
+            if(uri!=null){
+                binding.ivProfilePhoto.setImageURI(uri)
+                isProfilePhotoSelected = true
+            }else{
+                Log.d("PHOTOSELECTION","No Media Selected")
+            }
+        }
+
+        binding.ivProfilePhoto.setOnClickListener {
+            pickProfilePhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
 
         binding.btnAddService.setOnClickListener {
             addChip()
@@ -109,7 +128,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
         val clinicVisit = binding.tilClinicVisitLayout.editText?.text.toString()
         val videoConsult = binding.tilVideoConsultLayout.editText?.text.toString()
 
-
+        Log.d(TAG,binding.ivProfilePhoto.drawable.toString())
 
         if (fullName.isNullOrEmpty() || specialization.isNullOrEmpty() || about.isNullOrEmpty()
             || city.isNullOrEmpty() || address.isNullOrEmpty() || experience.isNullOrEmpty() || workingHours.isNullOrEmpty() || clinicVisit.isNullOrEmpty() || videoConsult.isNullOrEmpty()
@@ -117,6 +136,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             Toast.makeText(requireContext(), "Empty Fields!", Toast.LENGTH_SHORT).show()
         } else if (servicesSize == 0) {
             Toast.makeText(requireContext(), "Please Add Services", Toast.LENGTH_SHORT).show()
+        }else if(isProfilePhotoSelected == false){
+            Toast.makeText(requireContext(), "Please select a profile photo", Toast.LENGTH_SHORT).show()
         } else {
             registerDoctor()
         }

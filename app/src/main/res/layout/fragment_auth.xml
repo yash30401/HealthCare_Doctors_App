@@ -48,12 +48,14 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivProfilePhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:src="@drawable/group_54"
+                app:shapeAppearance="@style/RoundCorner"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/group_54" />
+               />
 
             <LinearLayout
                 android:layout_width="match_parent"
