@@ -1,5 +1,6 @@
 package com.devyash.healthcaredoctorsapp.ui.fragments
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -70,6 +71,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
 
     private var isProfilePhotoSelected:Boolean = false
 
+    private var ImageUri: Uri?=null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -91,8 +94,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
             if(uri!=null){
                 binding.ivProfilePhoto.setImageURI(uri)
                 isProfilePhotoSelected = true
+                ImageUri = uri
             }else{
                 Log.d("PHOTOSELECTION","No Media Selected")
+                ImageUri = null
             }
         }
 
@@ -270,7 +275,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                                     contatcInfo,
                                     experience,
                                     fullName,
-                                    "",
+                                  ImageUri.toString(),
                                     reviewsAndRatings,
                                     listOfServices,
                                     specialization,

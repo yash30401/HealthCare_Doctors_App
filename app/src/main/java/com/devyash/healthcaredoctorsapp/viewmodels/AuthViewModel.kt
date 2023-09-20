@@ -1,5 +1,6 @@
 package com.devyash.healthcaredoctorsapp.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devyash.healthcaredoctorsapp.models.DoctorData
