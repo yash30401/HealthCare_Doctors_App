@@ -104,9 +104,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 binding.progressBar.visibility = View.VISIBLE
                 // Depending on login or registration, call the appropriate function
                 lifecycleScope.launch(Dispatchers.IO) {
-                    if(args.loginOrRegister == "Login"){
+                    if (args.loginOrRegister == "Login") {
                         siginWithPhoneNumber(credentials)
-                    }else if(args.loginOrRegister == "Register"){
+                    } else if (args.loginOrRegister == "Register") {
                         sigUpWithPhoneNumber(credentials)
                     }
 
@@ -223,11 +223,11 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 }
 
                 is NetworkResult.Success -> {
-                        withContext(Dispatchers.Main){
-                            binding.progressBar.visibility = View.GONE
-                            findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
-                            countDownTimer.cancel()
-                        }
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar.visibility = View.GONE
+                        findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
+                        countDownTimer.cancel()
+                    }
 
                 }
 
@@ -269,7 +269,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 }
 
                 is NetworkResult.Success -> {
-                    lifecycleScope.launch(Dispatchers.IO){
+                    lifecycleScope.launch(Dispatchers.IO) {
                         checkIfUserExist()
                     }
                 }
@@ -290,24 +290,26 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
             binding.progressBar.visibility = View.VISIBLE
         }
         viewModel.checkIfUserAlreadyExist()
-        Log.d(FIRESTOREDATASTATUS,"Entering")
-        viewModel?.userExistFlow?.collect{
-            when(it){
+        Log.d(FIRESTOREDATASTATUS, "Entering")
+        viewModel?.userExistFlow?.collect {
+            when (it) {
                 is NetworkResult.Error -> {
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         binding.progressBar.visibility = View.GONE
                         Toast.makeText(context, it?.message.toString(), Toast.LENGTH_SHORT).show()
                         Log.d(Constants.FIRESTOREDATASTATUS, it?.message.toString())
                     }
                 }
+
                 is NetworkResult.Loading -> {
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         Log.d(FIRESTOREDATASTATUS, "Loading")
                     }
                 }
+
                 is NetworkResult.Success -> {
                     Log.d(FIRESTOREDATASTATUS, "Success")
-                    if(it.data == true){
+                    if (it.data == true) {
                         withContext(Dispatchers.Main) {
                             binding.progressBar.visibility = View.GONE
                             Toast.makeText(
@@ -318,9 +320,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
                         }
                         viewModel.signout()
-                    }else{
-                        lifecycleScope.launch(Dispatchers.IO){
-                            withContext(Dispatchers.Main){
+                    } else {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            withContext(Dispatchers.Main) {
                                 binding.progressBar.visibility = View.GONE
                                 findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
                                 countDownTimer.cancel()
@@ -333,6 +335,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                     }
 
                 }
+
                 else -> {
                     Log.d(FIRESTOREDATASTATUS, "ELSE BLOCK")
                 }

@@ -78,6 +78,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging'
     // Firestore
     implementation "com.google.firebase:firebase-firestore-ktx"
+    // Firebase Storage
+    implementation("com.google.firebase:firebase-storage-ktx")
 
     // Dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
