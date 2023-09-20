@@ -1,6 +1,7 @@
 package com.devyash.healthcaredoctorsapp.ui.fragments
 
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
@@ -226,8 +227,9 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 is NetworkResult.Success -> {
                     withContext(Dispatchers.Main) {
                         binding.progressBar.visibility = View.GONE
-                        findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
-                        countDownTimer.cancel()
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            checkIfUserExist("Login")
+                        }
                     }
 
                 }
@@ -271,7 +273,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
 
                 is NetworkResult.Success -> {
                     lifecycleScope.launch(Dispatchers.IO) {
-                        checkIfUserExist()
+                        checkIfUserExist("Register")
                     }
                 }
 
@@ -286,7 +288,7 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
     }
 
     // Function to check if the user already exists (for registration)
-    private suspend fun checkIfUserExist() {
+    private suspend fun checkIfUserExist(loginOrRegister: String) {
         withContext(Dispatchers.Main) {
             binding.progressBar.visibility = View.VISIBLE
         }
@@ -311,28 +313,51 @@ class OtpFragment : Fragment(R.layout.fragment_otp) {
                 is NetworkResult.Success -> {
                     Log.d(FIRESTOREDATASTATUS, "Success")
                     if (it.data == true) {
-                        withContext(Dispatchers.Main) {
-                            binding.progressBar.visibility = View.GONE
-                            Toast.makeText(
-                                context,
-                                "User with this phone number already exists.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        }
-                        viewModel.signout()
-                    } else {
-                        lifecycleScope.launch(Dispatchers.IO) {
+                        if (loginOrRegister == "Register") {
                             withContext(Dispatchers.Main) {
                                 binding.progressBar.visibility = View.GONE
+                                Toast.makeText(
+                                    context,
+                                    "User with this phone number already exists.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                viewModel.signout()
+                            }
+                        } else {
+                            withContext(Dispatchers.Main){
                                 findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
-                                countDownTimer.cancel()
-                                if (firebaseAuth.uid != null) {
-                                    Log.d(FIRESTOREDATASTATUS, "UId is not null")
-                                    addDoctorDataToFirestore(args.doctorData)
+                            }
+                            countDownTimer.cancel()
+                        }
+
+                    } else {
+                        if (loginOrRegister == "Register") {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                withContext(Dispatchers.Main) {
+                                    binding.progressBar.visibility = View.GONE
+                                    findNavController().navigate(R.id.action_otpFragment_to_homeFragment)
+
+                                    countDownTimer.cancel()
+
+                                    if (firebaseAuth.uid != null) {
+                                        Log.d(FIRESTOREDATASTATUS, "UId is not null")
+                                        addDoctorDataToFirestore(args.doctorData)
+                                    }
                                 }
                             }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                binding.progressBar.visibility = View.GONE
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Please Register Yourself First!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                            }
+                            viewModel.deleteUser()
                         }
+
                     }
 
                 }

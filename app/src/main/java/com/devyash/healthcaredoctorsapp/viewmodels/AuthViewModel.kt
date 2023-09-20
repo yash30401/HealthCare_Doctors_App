@@ -92,4 +92,8 @@ class AuthViewModel @Inject constructor(private var repository: AuthRepository) 
         repository.logout()
         _loginFlow.value = null
     }
+
+    fun deleteUser() = viewModelScope.launch{
+        repository.deleteAccount()
+    }
 }

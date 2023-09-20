@@ -88,7 +88,6 @@ class AuthRepository @Inject constructor(
 
             Log.d(STORAGEFAILURE,imageUrl)
 
-            Log.d(STORAGEFAILURE,"Outside:- "+imageUrl)
                 val doctorDataMap = mapOf(
                     "About" to data.About,
                     "Address" to data.Address,
@@ -127,6 +126,10 @@ class AuthRepository @Inject constructor(
 
     fun logout() {
         firebaseAuth.signOut()
+    }
+
+    suspend fun deleteAccount(){
+        firebaseAuth.currentUser?.delete()?.await()
     }
 
 }
