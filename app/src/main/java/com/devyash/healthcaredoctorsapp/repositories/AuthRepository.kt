@@ -102,7 +102,7 @@ class AuthRepository @Inject constructor(
                     "Experience" to data.Experience,
                     "Name" to data.Name,
                     "Profile_Pic" to imageUrl,
-                    "Reviews_And_Ratings" to data.Reviews_And_Ratings?.map { review ->
+                    "Reviews_and_Ratings" to data.Reviews_And_Ratings?.map { review ->
                         mapOf(
                             "date" to review.date,
                             "name" to review.name,
