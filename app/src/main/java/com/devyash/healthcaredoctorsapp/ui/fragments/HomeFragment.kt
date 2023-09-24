@@ -8,37 +8,28 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.adapters.SlotAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
-import com.devyash.healthcaredoctorsapp.models.DoctorData
-import com.devyash.healthcaredoctorsapp.networking.NetworkResult
-import com.devyash.healthcaredoctorsapp.others.Constants
+import com.devyash.healthcaredoctorsapp.models.SlotItem
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
-import com.devyash.healthcaredoctorsapp.others.Constants.TAG
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -56,6 +47,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
+    private lateinit var slotAdapter: SlotAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,7 +69,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             activity, drawerLayout, toolbar, 0, R.string.app_name
         )
 
-        Log.d("FIRESBASEUID",firebaseAuth.uid.toString())
+        Log.d("FIRESBASEUID", firebaseAuth.uid.toString())
 
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -133,6 +125,24 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         _binding = FragmentHomeBinding.bind(view)
 
         setupNavigationHeader()
+        slotAdapter = SlotAdapter(
+            mutableListOf(
+                SlotItem.slotTiming("9 AM"),
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.add
+                )?.let {
+                    SlotItem.slotAddButton(
+                        it
+                    )
+                }
+            )
+        )
+
+        slotAdapter.itemClickListener = {view,position->
+            Toast.makeText(requireContext(), "Button Clicked", Toast.LENGTH_SHORT).show()
+            slotAdapter.addItemToTheList("10 AM")
+        }
         setupSlotRecylerView()
     }
 
@@ -166,10 +176,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         phoneNumber.text = hiddenPhoneNumberText
     }
 
-    private fun setupSlotRecylerView(){
+    private fun setupSlotRecylerView() {
         binding.rvSlot.apply {
-            adapter = SlotAdapter(listOf("9 AM", "10 AM","11 AM","2 PM"))
-            layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+            adapter = slotAdapter
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
