@@ -20,7 +20,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
+import com.devyash.healthcaredoctorsapp.adapters.SlotAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
 import com.devyash.healthcaredoctorsapp.models.DoctorData
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
@@ -131,7 +133,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         _binding = FragmentHomeBinding.bind(view)
 
         setupNavigationHeader()
-
+        setupSlotRecylerView()
     }
 
 
@@ -164,6 +166,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         phoneNumber.text = hiddenPhoneNumberText
     }
 
+    private fun setupSlotRecylerView(){
+        binding.rvSlot.apply {
+            adapter = SlotAdapter(listOf("9 AM", "10 AM"))
+            layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        }
+    }
 
 
     override fun onDestroy() {
