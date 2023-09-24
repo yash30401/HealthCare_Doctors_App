@@ -168,7 +168,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun setupSlotRecylerView(){
         binding.rvSlot.apply {
-            adapter = SlotAdapter(listOf("9 AM", "10 AM"))
+            adapter = SlotAdapter(listOf("9 AM", "10 AM","11 AM","2 PM"))
             layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
         }
     }
