@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.repositories.SlotsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class SlotViewModel @Inject constructor(private var slotsRepository: SlotsRepository):ViewModel() {
 
     private val _slotFlow = MutableStateFlow<NetworkResult<String>?>(null)

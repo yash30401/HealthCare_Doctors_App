@@ -15,4 +15,7 @@ object Constants {
     // Firestore
     const val FIRESTOREDATASTATUS = "FIRESTOREDATASTATUS"
     const val STORAGEFAILURE = "STORAGEFAILURE"
+
+    // Slot
+    const val SLOTTESTING = "SLOTTESTING"
 }

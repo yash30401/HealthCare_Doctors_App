@@ -17,20 +17,28 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.adapters.SlotAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
 import com.devyash.healthcaredoctorsapp.models.SlotItem
+import com.devyash.healthcaredoctorsapp.models.SlotList
+import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
+import com.devyash.healthcaredoctorsapp.others.Constants.SLOTTESTING
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.devyash.healthcaredoctorsapp.viewmodels.SlotViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -200,6 +208,26 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
     override fun onTimeSelected(time: String) {
         slotAdapter.addItemToTheList(time)
 
+        lifecycleScope.launch (Dispatchers.IO){
+            slotViewModel.addSlotToFirebase(SlotList(time))
+
+            slotViewModel.slotFlow.collect{
+                when(it){
+                    is NetworkResult.Error ->{
+                        Log.d(SLOTTESTING,"Error Block:- ${it?.message.toString()}")
+                    }
+                    is NetworkResult.Loading -> {
+                        Log.d(SLOTTESTING,"Loading Block:- ${it?.message.toString()}")
+                    }
+                    is NetworkResult.Success -> {
+                        Log.d(SLOTTESTING,"Success Block Data:- ${it?.data.toString()}")
+                    }
+                    else -> {
+                        Log.d(SLOTTESTING,"Else Block:- ${it?.message.toString()}")
+                    }
+                }
+            }
+        }
     }
 
 }
