@@ -26,6 +26,7 @@ import com.devyash.healthcaredoctorsapp.models.SlotItem
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
+import com.devyash.healthcaredoctorsapp.viewmodels.SlotViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -43,6 +44,7 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
     private lateinit var navigationView: NavigationView
 
     private val viewModel by viewModels<AuthViewModel>()
+    private val slotViewModel by viewModels<SlotViewModel>()
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
@@ -197,6 +199,7 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
 
     override fun onTimeSelected(time: String) {
         slotAdapter.addItemToTheList(time)
+
     }
 
 }
