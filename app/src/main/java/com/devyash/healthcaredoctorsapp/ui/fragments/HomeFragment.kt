@@ -127,7 +127,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupNavigationHeader()
         slotAdapter = SlotAdapter(
             mutableListOf(
-                SlotItem.slotTiming("9 AM"),
                 ContextCompat.getDrawable(
                     requireContext(),
                     R.drawable.add
