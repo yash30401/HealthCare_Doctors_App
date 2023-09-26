@@ -141,7 +141,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         )
 
         slotAdapter.itemClickListener = { view, position ->
-            Toast.makeText(requireContext(), "Button Clicked", Toast.LENGTH_SHORT).show()
 //            slotAdapter.addItemToTheList("10 AM")
             val timeFragmentDialog = TimePickerDialogFragment()
             if (fragmentManager != null) {
