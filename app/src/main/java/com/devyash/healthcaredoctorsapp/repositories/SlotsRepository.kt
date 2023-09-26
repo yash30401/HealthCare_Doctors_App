@@ -1,0 +1,36 @@
+package com.devyash.healthcaredoctorsapp.repositories
+
+import com.devyash.healthcaredoctorsapp.models.SlotList
+import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.util.await
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
+
+class SlotsRepository @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
+) {
+
+    val currentUser = firebaseAuth?.currentUser
+
+    suspend fun addSlotToFirebase(slotTimings:SlotList):Flow<NetworkResult<String>>{
+        return flow {
+            val doctorId= currentUser?.uid.toString()
+            val timingsMap = mapOf(
+                "timings" to slotTimings.timings
+            )
+
+            firestore.collection("Doctors").document(doctorId).collection("Slots").add(timingsMap).await()
+            emit(NetworkResult.Success("Slot Added"))
+        }.catch {
+            NetworkResult.Error(it.message,null)
+        }.flowOn(Dispatchers.IO)
+    }
+
+}
