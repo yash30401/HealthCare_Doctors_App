@@ -34,7 +34,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -141,8 +141,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         )
 
         slotAdapter.itemClickListener = { view, position ->
-//            slotAdapter.addItemToTheList("10 AM")
-            val timeFragmentDialog = TimePickerDialogFragment()
+
+            val timeFragmentDialog = TimePickerDialogFragment(this)
             if (fragmentManager != null) {
                 timeFragmentDialog.show(fragmentManager, "Time Picker Dialog")
             }
@@ -193,6 +193,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onTimeSelected(time: String) {
+        slotAdapter.addItemToTheList(time)
     }
 
 }
