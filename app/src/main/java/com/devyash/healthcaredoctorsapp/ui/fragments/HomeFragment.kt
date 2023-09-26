@@ -124,6 +124,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
 
+        val fragmentManager = activity?.supportFragmentManager
+
         setupNavigationHeader()
         slotAdapter = SlotAdapter(
             mutableListOf(
@@ -138,10 +140,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             )
         )
 
-        slotAdapter.itemClickListener = {view,position->
+        slotAdapter.itemClickListener = { view, position ->
             Toast.makeText(requireContext(), "Button Clicked", Toast.LENGTH_SHORT).show()
-            slotAdapter.addItemToTheList("10 AM")
+//            slotAdapter.addItemToTheList("10 AM")
+            val timeFragmentDialog = TimePickerDialogFragment()
+            if (fragmentManager != null) {
+                timeFragmentDialog.show(fragmentManager, "Time Picker Dialog")
+            }
         }
+
         setupSlotRecylerView()
     }
 
