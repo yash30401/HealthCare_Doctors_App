@@ -206,10 +206,10 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
     }
 
     override fun onTimeSelected(time: String) {
-        slotAdapter.addItemToTheList(time)
+        val slotPosition = slotAdapter.addItemToTheList(time)
 
         lifecycleScope.launch (Dispatchers.IO){
-            slotViewModel.addSlotToFirebase(SlotList(time))
+            slotViewModel.addSlotToFirebase(SlotList(time),slotPosition)
 
             slotViewModel.slotFlow.collect{
                 when(it){

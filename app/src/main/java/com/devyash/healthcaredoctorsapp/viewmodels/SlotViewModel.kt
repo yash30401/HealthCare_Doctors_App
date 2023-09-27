@@ -17,10 +17,10 @@ class SlotViewModel @Inject constructor(private var slotsRepository: SlotsReposi
     private val _slotFlow = MutableStateFlow<NetworkResult<String>?>(null)
     val slotFlow:StateFlow<NetworkResult<String>?> = _slotFlow
 
-    fun addSlotToFirebase(slotTimings:SlotList) = viewModelScope.launch{
+    fun addSlotToFirebase(slotTimings:SlotList,slotPosition:Int) = viewModelScope.launch{
         _slotFlow.value = NetworkResult.Loading()
 
-        val result = slotsRepository.addSlotToFirebase(slotTimings)
+        val result = slotsRepository.addSlotToFirebase(slotTimings,slotPosition)
         result.collect{
             when(it){
                 is NetworkResult.Error -> _slotFlow.value = NetworkResult.Error(it.message.toString())

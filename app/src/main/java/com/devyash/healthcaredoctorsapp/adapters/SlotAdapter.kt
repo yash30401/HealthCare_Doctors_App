@@ -1,13 +1,16 @@
 package com.devyash.healthcaredoctorsapp.adapters
 
+import android.app.TimePickerDialog.OnTimeSetListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TimePicker.OnTimeChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.AddSlotItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.databinding.SlotItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.models.SlotItem
+import com.devyash.healthcaredoctorsapp.ui.fragments.addTimeClickListner
 
 class SlotAdapter(private val listOfSlots: MutableList<SlotItem?>) :
     RecyclerView.Adapter<HomeRecyclerViewHolder>() {
@@ -46,10 +49,13 @@ class SlotAdapter(private val listOfSlots: MutableList<SlotItem?>) :
         return listOfSlots.size
     }
 
-    fun addItemToTheList(slotTiming:String){
+    fun addItemToTheList(slotTiming:String):Int{
         val newItem = SlotItem.slotTiming(slotTiming)
-        listOfSlots.add(listOfSlots.size-1,newItem)
+        val slotIndex = listOfSlots.size-1
+        listOfSlots.add(slotIndex,newItem)
         notifyItemInserted(listOfSlots.size-1)
+
+        return slotIndex
     }
 
     override fun onBindViewHolder(holder: HomeRecyclerViewHolder, position: Int) {
@@ -74,4 +80,5 @@ class SlotAdapter(private val listOfSlots: MutableList<SlotItem?>) :
             }
         }
     }
+
 }

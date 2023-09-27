@@ -19,17 +19,21 @@ class SlotsRepository @Inject constructor(
 
     val currentUser = firebaseAuth?.currentUser
 
-    suspend fun addSlotToFirebase(slotTimings:SlotList):Flow<NetworkResult<String>>{
+    suspend fun addSlotToFirebase(
+        slotTimings: SlotList,
+        slotPosition: Int
+    ): Flow<NetworkResult<String>> {
         return flow {
-            val doctorId= currentUser?.uid.toString()
+            val doctorId = currentUser?.uid.toString()
             val timingsMap = mapOf(
                 "timings" to slotTimings.timings
             )
 
-            firestore.collection("Doctors").document(doctorId).collection("Slots").add(timingsMap).await()
+            firestore.collection("Doctors").document(doctorId).collection("Slots")
+                .document(slotPosition.toString()).set(timingsMap).await()
             emit(NetworkResult.Success("Slot Added"))
         }.catch {
-            NetworkResult.Error(it.message,null)
+            NetworkResult.Error(it.message, null)
         }.flowOn(Dispatchers.IO)
     }
 
