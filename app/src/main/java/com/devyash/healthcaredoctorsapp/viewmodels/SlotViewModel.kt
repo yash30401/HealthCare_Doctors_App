@@ -17,6 +17,9 @@ class SlotViewModel @Inject constructor(private var slotsRepository: SlotsReposi
     private val _slotFlow = MutableStateFlow<NetworkResult<String>?>(null)
     val slotFlow:StateFlow<NetworkResult<String>?> = _slotFlow
 
+    private val _allSlotFlow= MutableStateFlow<NetworkResult<List<SlotList>>?>(null)
+    val allSlotFlow:StateFlow<NetworkResult<List<SlotList>>?> = _allSlotFlow
+
     fun addSlotToFirebase(slotTimings:SlotList,slotPosition:Int) = viewModelScope.launch{
         _slotFlow.value = NetworkResult.Loading()
 
@@ -26,6 +29,24 @@ class SlotViewModel @Inject constructor(private var slotsRepository: SlotsReposi
                 is NetworkResult.Error -> _slotFlow.value = NetworkResult.Error(it.message.toString())
                 is NetworkResult.Loading -> _slotFlow.value = NetworkResult.Loading()
                 is NetworkResult.Success -> _slotFlow.value = NetworkResult.Success(it.data.toString())
+            }
+        }
+    }
+
+    fun getAllSlots() = viewModelScope.launch {
+        _allSlotFlow.value = NetworkResult.Loading()
+        val result = slotsRepository.getAllSlots()
+        result.collect{
+            when(it){
+                is NetworkResult.Error -> {
+                    _allSlotFlow.value = NetworkResult.Error(it.message.toString())
+                }
+                is NetworkResult.Loading -> {
+                    _allSlotFlow.value = NetworkResult.Loading()
+                }
+                is NetworkResult.Success -> {
+                    _allSlotFlow.value = NetworkResult.Success(it.data?.toList()!!)
+                }
             }
         }
     }

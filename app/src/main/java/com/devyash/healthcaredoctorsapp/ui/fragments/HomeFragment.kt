@@ -192,6 +192,21 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
     }
 
     private fun setupSlotRecylerView() {
+        slotViewModel.getAllSlots()
+
+        lifecycleScope.launch(Dispatchers.IO){
+            slotViewModel.allSlotFlow.collect{
+                when(it){
+                    is NetworkResult.Error -> {
+                        Log.d(SLOTTESTING,"Error Block:- ${it?.message.toString()}")
+                    }
+                    is NetworkResult.Loading -> TODO()
+                    is NetworkResult.Success -> TODO()
+                    else -> TODO()
+                }
+            }
+        }
+
         binding.rvSlot.apply {
             adapter = slotAdapter
             layoutManager =

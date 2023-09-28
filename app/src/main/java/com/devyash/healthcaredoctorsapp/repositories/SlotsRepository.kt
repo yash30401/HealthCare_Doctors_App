@@ -37,4 +37,27 @@ class SlotsRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun getAllSlots(): Flow<NetworkResult<MutableList<SlotList>>> {
+        return flow {
+            val slotCollectionRef =
+                firestore.collection("Doctors").document(firebaseAuth.uid.toString())
+                    .collection("Slots")
+
+            val querySnapshot = slotCollectionRef.get().await()
+            val listOfSlots = mutableListOf<SlotList>()
+
+            for (document in querySnapshot) {
+                if (document.exists()) {
+                    val slotList = SlotList(
+                        timings =document.getString("timings") ?: ""
+                    )
+                    listOfSlots.add(slotList)
+                }
+            }
+            emit(NetworkResult.Success(listOfSlots))
+        }.catch {
+            NetworkResult.Error(it.message, null)
+        }.flowOn(Dispatchers.IO)
+    }
+
 }

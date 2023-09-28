@@ -18,4 +18,5 @@ object Constants {
 
     // Slot
     const val SLOTTESTING = "SLOTTESTING"
+    const val GETTINGSLOTSFROMFIREBASE = "GETTINGSLOTSFROMFIREBASE"
 }
