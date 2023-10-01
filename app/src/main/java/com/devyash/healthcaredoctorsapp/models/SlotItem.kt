@@ -7,6 +7,8 @@ sealed class SlotItem(){
 
     class slotTiming(val slotTiming:String):SlotItem()
 
+    class allSlots(val timings:List<String>):SlotItem()
+
     class slotAddButton(val resource: Drawable):SlotItem()
 }
 

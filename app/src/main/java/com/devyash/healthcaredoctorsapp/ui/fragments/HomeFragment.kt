@@ -19,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withCreated
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
@@ -27,6 +28,7 @@ import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
 import com.devyash.healthcaredoctorsapp.models.SlotItem
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants.GETTINGSLOTSFROMFIREBASE
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.SLOTTESTING
@@ -39,11 +41,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
+class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -137,28 +140,10 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
         val fragmentManager = activity?.supportFragmentManager
 
         setupNavigationHeader()
-        slotAdapter = SlotAdapter(
-            mutableListOf(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.add
-                )?.let {
-                    SlotItem.slotAddButton(
-                        it
-                    )
-                }
-            )
-        )
 
-        slotAdapter.itemClickListener = { view, position ->
-
-            val timeFragmentDialog = TimePickerDialogFragment(this)
-            if (fragmentManager != null) {
-                timeFragmentDialog.show(fragmentManager, "Time Picker Dialog")
-            }
-        }
-
+        slotAdapter = SlotAdapter(ContextCompat.getDrawable(requireContext(),R.drawable.add)!!)
         setupSlotRecylerView()
+
     }
 
 
@@ -194,24 +179,48 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
     private fun setupSlotRecylerView() {
         slotViewModel.getAllSlots()
 
-        lifecycleScope.launch(Dispatchers.IO){
-            slotViewModel.allSlotFlow.collect{
-                when(it){
+        lifecycleScope.launch(Dispatchers.IO) {
+            slotViewModel.allSlotFlow.collect {
+                when (it) {
                     is NetworkResult.Error -> {
-                        Log.d(SLOTTESTING,"Error Block:- ${it?.message.toString()}")
+                        Log.d(GETTINGSLOTSFROMFIREBASE, "Error Block:- ${it?.message.toString()}")
                     }
-                    is NetworkResult.Loading -> TODO()
-                    is NetworkResult.Success -> TODO()
-                    else -> TODO()
+
+                    is NetworkResult.Loading -> Log.d(
+                        GETTINGSLOTSFROMFIREBASE,
+                        "Loading Block:- ${it?.message.toString()}"
+                    )
+
+                    is NetworkResult.Success -> {
+                        Log.d(GETTINGSLOTSFROMFIREBASE, "Success Block:- ${it?.data.toString()}")
+                        withContext(Dispatchers.Main) {
+
+                            slotAdapter.showFirebaseList(it.data?.toList()!!)
+
+                            slotAdapter.itemClickListener = { view, position ->
+
+                                val timeFragmentDialog = TimePickerDialogFragment(this@HomeFragment)
+                                if (fragmentManager != null) {
+                                    timeFragmentDialog.show(requireFragmentManager(), "Time Picker Dialog")
+                                }
+                            }
+
+                            binding.rvSlot.apply {
+                                adapter = slotAdapter
+                                layoutManager =
+                                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                            }
+
+                        }
+                    }
+
+                    else -> {
+                        Log.d(GETTINGSLOTSFROMFIREBASE, "Else Block:- ${it?.message.toString()}")
+                    }
                 }
             }
         }
 
-        binding.rvSlot.apply {
-            adapter = slotAdapter
-            layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        }
     }
 
 
@@ -223,22 +232,25 @@ class HomeFragment : Fragment(R.layout.fragment_home),addTimeClickListner {
     override fun onTimeSelected(time: String) {
         val slotPosition = slotAdapter.addItemToTheList(time)
 
-        lifecycleScope.launch (Dispatchers.IO){
-            slotViewModel.addSlotToFirebase(SlotList(time),slotPosition)
+        lifecycleScope.launch(Dispatchers.IO) {
+            slotViewModel.addSlotToFirebase(SlotList(time), slotPosition)
 
-            slotViewModel.slotFlow.collect{
-                when(it){
-                    is NetworkResult.Error ->{
-                        Log.d(SLOTTESTING,"Error Block:- ${it?.message.toString()}")
+            slotViewModel.slotFlow.collect {
+                when (it) {
+                    is NetworkResult.Error -> {
+                        Log.d(SLOTTESTING, "Error Block:- ${it?.message.toString()}")
                     }
+
                     is NetworkResult.Loading -> {
-                        Log.d(SLOTTESTING,"Loading Block:- ${it?.message.toString()}")
+                        Log.d(SLOTTESTING, "Loading Block:- ${it?.message.toString()}")
                     }
+
                     is NetworkResult.Success -> {
-                        Log.d(SLOTTESTING,"Success Block Data:- ${it?.data.toString()}")
+                        Log.d(SLOTTESTING, "Success Block Data:- ${it?.data.toString()}")
                     }
+
                     else -> {
-                        Log.d(SLOTTESTING,"Else Block:- ${it?.message.toString()}")
+                        Log.d(SLOTTESTING, "Else Block:- ${it?.message.toString()}")
                     }
                 }
             }

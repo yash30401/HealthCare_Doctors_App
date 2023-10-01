@@ -16,6 +16,15 @@ sealed class HomeRecyclerViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
         }
     }
 
+    class AllSlotViewHolder(private val binding:SlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
+
+        fun bind(slotTiming: SlotItem.allSlots,postion:Int){
+            val currentSlot = slotTiming.timings[postion]
+            binding.tvSlotTiming.text = currentSlot
+
+        }
+    }
+
     class AddSlotViewHolder(private val binding:AddSlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
         fun bind(buttonImage:SlotItem.slotAddButton){
             binding.ivAddSlot.setImageDrawable(buttonImage.resource)
