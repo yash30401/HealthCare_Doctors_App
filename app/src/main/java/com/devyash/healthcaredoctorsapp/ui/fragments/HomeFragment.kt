@@ -184,6 +184,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
                 when (it) {
                     is NetworkResult.Error -> {
                         Log.d(GETTINGSLOTSFROMFIREBASE, "Error Block:- ${it?.message.toString()}")
+                        withContext(Dispatchers.Main){
+                            binding.slotProgressBar.visibility = View.INVISIBLE
+                        }
                     }
 
                     is NetworkResult.Loading -> Log.d(
@@ -212,10 +215,16 @@ class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
                             }
 
                         }
+                        withContext(Dispatchers.Main){
+                            binding.slotProgressBar.visibility = View.INVISIBLE
+                        }
                     }
 
                     else -> {
                         Log.d(GETTINGSLOTSFROMFIREBASE, "Else Block:- ${it?.message.toString()}")
+                        withContext(Dispatchers.Main){
+                            binding.slotProgressBar.visibility = View.INVISIBLE
+                        }
                     }
                 }
             }
