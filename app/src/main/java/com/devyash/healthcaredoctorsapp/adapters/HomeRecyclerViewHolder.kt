@@ -13,17 +13,12 @@ sealed class HomeRecyclerViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
     class SlotViewHolder(private val binding:SlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
         fun bind(slotTiming:SlotItem.slotTiming){
             binding.tvSlotTiming.text = slotTiming.slotTiming.toString()
+            binding.ivDelete.setOnClickListener {
+                itemClickListener?.invoke(it,adapterPosition)
+            }
         }
     }
 
-    class AllSlotViewHolder(private val binding:SlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
-
-        fun bind(slotTiming: SlotItem.allSlots,postion:Int){
-            val currentSlot = slotTiming.timings[postion]
-            binding.tvSlotTiming.text = currentSlot
-
-        }
-    }
 
     class AddSlotViewHolder(private val binding:AddSlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
         fun bind(buttonImage:SlotItem.slotAddButton){

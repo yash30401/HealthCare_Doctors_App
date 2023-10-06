@@ -78,9 +78,6 @@ class SlotAdapter(addButton:Drawable) :
                 holder.bind(listOfSlots[position] as SlotItem.slotTiming)
             }
 
-            is HomeRecyclerViewHolder.AllSlotViewHolder->{
-                holder.bind(listOfSlots[position] as SlotItem.allSlots, position)
-            }
         }
     }
 
