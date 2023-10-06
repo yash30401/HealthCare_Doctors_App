@@ -19,6 +19,7 @@ class SlotAdapter(addButton:Drawable) :
     RecyclerView.Adapter<HomeRecyclerViewHolder>() {
 
     var itemClickListener: ((view: View, position: Int) -> Unit)? = null
+    var deleteClickListner:((view: View, position: Int) -> Unit)? = null
     private val listOfSlots=  mutableListOf<SlotItem>(SlotItem.slotAddButton(addButton))
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeRecyclerViewHolder {
         return when (viewType) {
@@ -70,6 +71,7 @@ class SlotAdapter(addButton:Drawable) :
 
     override fun onBindViewHolder(holder: HomeRecyclerViewHolder, position: Int) {
         holder.itemClickListener = itemClickListener
+        holder.deleteClickListner = deleteClickListner
         when(holder){
             is HomeRecyclerViewHolder.AddSlotViewHolder -> {
                 holder.bind(listOfSlots[position] as SlotItem.slotAddButton)

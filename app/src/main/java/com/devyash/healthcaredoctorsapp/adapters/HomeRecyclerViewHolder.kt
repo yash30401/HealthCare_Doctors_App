@@ -10,11 +10,12 @@ import com.devyash.healthcaredoctorsapp.models.SlotItem
 sealed class HomeRecyclerViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
     var itemClickListener: ((view: View, position: Int) -> Unit)? = null
+    var deleteClickListner: ((view:View,position:Int)-> Unit)?= null
     class SlotViewHolder(private val binding:SlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
         fun bind(slotTiming:SlotItem.slotTiming){
             binding.tvSlotTiming.text = slotTiming.slotTiming.toString()
             binding.ivDelete.setOnClickListener {
-                itemClickListener?.invoke(it,adapterPosition)
+                deleteClickListner?.invoke(it,adapterPosition)
             }
         }
     }

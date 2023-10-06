@@ -1,5 +1,6 @@
 package com.devyash.healthcaredoctorsapp.ui.fragments
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ import com.devyash.healthcaredoctorsapp.others.Constants.SLOTTESTING
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.devyash.healthcaredoctorsapp.viewmodels.SlotViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -206,6 +208,19 @@ class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
                                 if (fragmentManager != null) {
                                     timeFragmentDialog.show(requireFragmentManager(), "Time Picker Dialog")
                                 }
+                            }
+
+                            slotAdapter.deleteClickListner = {view,position->
+                                val dialog = MaterialAlertDialogBuilder(requireContext())
+                                    .setCancelable(true)
+                                    .setTitle("Delete Slot")
+                                    .setMessage("Do you want to delete this slot?")
+                                    .setNegativeButton("Cancel",DialogInterface.OnClickListener{dialogInterface, i ->  
+                                        dialogInterface.dismiss()
+                                    })
+                                    .setPositiveButton("Delete",DialogInterface.OnClickListener{dialogInterface, i ->
+                                        Toast.makeText(requireContext(), "Slot Deleted", Toast.LENGTH_SHORT).show()
+                                    }).show()
                             }
 
                             binding.rvSlot.apply {
