@@ -2,7 +2,9 @@ package com.devyash.healthcaredoctorsapp.models
 
 import java.io.Serializable
 
-data class DoctorData(   val About: String = "",
+data class DoctorData(
+    val Id:String= "",
+    val About: String = "",
                          val Address: String = "",
                          val City: String = "",
                          val video_consult: Int? = 0,

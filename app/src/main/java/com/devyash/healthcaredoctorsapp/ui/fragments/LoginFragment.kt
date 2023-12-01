@@ -180,7 +180,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                                 it.verificationId.toString(),
                                 phoneNumber,
                                 ResendTokenModelClass(resendToken),
-                                DoctorData("", "", "", 0, 0, ContactInfo("", "", ""), 0, "","",
+                                DoctorData("","", "", "", 0, 0, ContactInfo("", "", ""), 0, "","",
                                     emptyList(), emptyList(),"",""
                                 ),
                                 "Login"

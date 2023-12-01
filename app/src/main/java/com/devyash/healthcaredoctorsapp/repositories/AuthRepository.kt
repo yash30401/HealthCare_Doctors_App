@@ -89,6 +89,7 @@ class AuthRepository @Inject constructor(
             Log.d(STORAGEFAILURE,imageUrl)
 
                 val doctorDataMap = mapOf(
+                    "Id" to doctorId,
                     "About" to data.About,
                     "Address" to data.Address,
                     "City" to data.City,

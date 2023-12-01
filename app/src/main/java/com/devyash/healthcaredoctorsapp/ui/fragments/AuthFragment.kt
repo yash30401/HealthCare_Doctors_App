@@ -266,7 +266,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth) {
                                 it.verificationId.toString(),
                                 phoneNumber,
                                 ResendTokenModelClass(resendToken),
-                                DoctorData(
+                                DoctorData("",
                                     about,
                                     address,
                                     city,

@@ -223,11 +223,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
                                     }).show()
                             }
 
-                            binding.rvSlot.apply {
-                                adapter = slotAdapter
-                                layoutManager =
-                                    LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                            }
+                                binding.rvSlot.apply {
+                                    adapter = slotAdapter
+                                    layoutManager =
+                                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                                }
 
                         }
                         withContext(Dispatchers.Main){
