@@ -38,15 +38,10 @@ class SlotViewModel @Inject constructor(private var slotsRepository: SlotsReposi
         val result = slotsRepository.getAllSlots()
         result.collect{
             when(it){
-                is NetworkResult.Error -> {
-                    _allSlotFlow.value = NetworkResult.Error(it.message.toString())
-                }
-                is NetworkResult.Loading -> {
-                    _allSlotFlow.value = NetworkResult.Loading()
-                }
-                is NetworkResult.Success -> {
-                    _allSlotFlow.value = NetworkResult.Success(it.data?.toList()!!)
-                }
+                is NetworkResult.Error -> _allSlotFlow.value = NetworkResult.Error(it.message.toString())
+                is NetworkResult.Loading -> _allSlotFlow.value = NetworkResult.Loading()
+                is NetworkResult.Success -> _allSlotFlow.value = NetworkResult.Success(it.data?.toList()!!)
+
             }
         }
     }
