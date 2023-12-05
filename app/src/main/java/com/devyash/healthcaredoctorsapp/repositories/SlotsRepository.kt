@@ -1,5 +1,6 @@
 package com.devyash.healthcaredoctorsapp.repositories
 
+import android.util.Log
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.util.await
@@ -29,6 +30,7 @@ class SlotsRepository @Inject constructor(
             val doctorId = currentUser?.uid.toString()
 
             val timestampObject = Timestamp(java.util.Date(slotTimings.timings))
+            Log.d("TIMECHECKING","TimeStamp in Repo:- ${slotTimings.timings}")
             val timingsMap = mapOf(
                 "timings" to timestampObject
             )

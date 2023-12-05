@@ -4,12 +4,17 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
 import com.devyash.healthcaredoctorsapp.R
 import java.util.Calendar
+
+var year:Int = 0
+var month:Int= 0
+var day:Int = 0
 
 class DatePickerDialogFragment(private val addDateTimeClickListener: AddDateTimeClickListener) : DialogFragment() {
 
@@ -24,14 +29,12 @@ class DatePickerDialogFragment(private val addDateTimeClickListener: AddDateTime
         builder.setView(dialogView)
 
         btnOk.setOnClickListener {
-            val year = datePicker.year
-            val month = datePicker.month
-            val day = datePicker.dayOfMonth
+             year = datePicker.year
+             month = datePicker.month
+             day = datePicker.dayOfMonth
+            Log.d("TIMECHECKING","DayOfMonth:- ${day}")
 
-            val calendar = Calendar.getInstance()
-            calendar.set(year, month, day)
-
-            addDateTimeClickListener.onDateSelected(calendar.timeInMillis)
+            addDateTimeClickListener.onDateSelected()
             dismiss()
         }
 
@@ -58,6 +61,9 @@ class TimePickerDialogFragment(private val addDateTimeClickListener: AddDateTime
             val minute = timePicker.minute
 
             val calendar = Calendar.getInstance()
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
             calendar.set(Calendar.HOUR_OF_DAY, hour)
             calendar.set(Calendar.MINUTE, minute)
 
@@ -71,7 +77,7 @@ class TimePickerDialogFragment(private val addDateTimeClickListener: AddDateTime
 
 
 interface AddDateTimeClickListener {
-    fun onDateSelected(date: Long)
+    fun onDateSelected()
     fun onTimeSelected(time: Long)
 }
 

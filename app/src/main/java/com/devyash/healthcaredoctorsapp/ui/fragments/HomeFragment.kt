@@ -44,6 +44,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneOffset
+import java.util.Calendar
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -64,8 +68,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
     lateinit var firebaseAuth: FirebaseAuth
 
     private lateinit var slotAdapter: SlotAdapter
-
-    private var dateTime:Long?=null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -254,20 +256,21 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
         _binding = null
     }
 
-    override fun onDateSelected(date: Long) {
+    override fun onDateSelected() {
         val timePickerFragment = TimePickerDialogFragment(this)
         timePickerFragment.show(requireActivity().supportFragmentManager, "timePicker")
-
-        dateTime = date
     }
 
     override fun onTimeSelected(time: Long) {
-        dateTime = dateTime?.plus(time)
+        Log.d("TIMECHECKING", "DATETIME:- $time")
 
-        val slotPosition = slotAdapter.addItemToTheList(time)
+        val slotPosition = time?.let { slotAdapter.addItemToTheList(it) }
 
         lifecycleScope.launch(Dispatchers.IO) {
-            slotViewModel.addSlotToFirebase(SlotList(time), slotPosition)
+            if (slotPosition != null) {
+                time?.let { SlotList(it) }
+                    ?.let { slotViewModel.addSlotToFirebase(it, slotPosition) }
+            }
 
             slotViewModel.slotFlow.collect {
                 when (it) {
