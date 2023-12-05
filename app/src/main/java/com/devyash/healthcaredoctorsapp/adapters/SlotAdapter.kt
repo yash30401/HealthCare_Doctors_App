@@ -12,8 +12,6 @@ import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.AddSlotItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.databinding.SlotItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.models.SlotItem
-import com.devyash.healthcaredoctorsapp.models.SlotList
-import com.devyash.healthcaredoctorsapp.ui.fragments.addTimeClickListner
 
 class SlotAdapter(addButton:Drawable) :
     RecyclerView.Adapter<HomeRecyclerViewHolder>() {
@@ -54,7 +52,7 @@ class SlotAdapter(addButton:Drawable) :
         return listOfSlots.size
     }
 
-    fun addItemToTheList(slotTiming:String):Int{
+    fun addItemToTheList(slotTiming:Long):Int{
         val newItem = SlotItem.slotTiming(slotTiming)
         val slotIndex = listOfSlots.size-1
         listOfSlots.add(slotIndex,newItem)
@@ -63,7 +61,7 @@ class SlotAdapter(addButton:Drawable) :
         return slotIndex
     }
 
-    fun showFirebaseList(slots:List<String>){
+    fun showFirebaseList(slots:List<Long>){
         for (slot in slots) {
             addItemToTheList(slot)
         }

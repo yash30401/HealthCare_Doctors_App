@@ -5,7 +5,7 @@ import android.widget.ImageView
 
 sealed class SlotItem(){
 
-    class slotTiming(val slotTiming:String):SlotItem()
+    class slotTiming(val slotTiming:Long):SlotItem()
 
     class allSlots(val timings:List<String>):SlotItem()
 

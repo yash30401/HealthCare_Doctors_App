@@ -45,10 +45,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
+class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -63,6 +64,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
     lateinit var firebaseAuth: FirebaseAuth
 
     private lateinit var slotAdapter: SlotAdapter
+
+    private var dateTime:Long?=null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -204,10 +207,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
 
                             slotAdapter.itemClickListener = { view, position ->
 
-                                val timeFragmentDialog = TimePickerDialogFragment(this@HomeFragment)
-                                if (fragmentManager != null) {
-                                    timeFragmentDialog.show(requireFragmentManager(), "Time Picker Dialog")
-                                }
+                                val datePickerFragment = DatePickerDialogFragment(this@HomeFragment)
+                                datePickerFragment.show(requireActivity().supportFragmentManager, "datePicker")
                             }
 
                             slotAdapter.deleteClickListner = {view,position->
@@ -253,7 +254,16 @@ class HomeFragment : Fragment(R.layout.fragment_home), addTimeClickListner {
         _binding = null
     }
 
-    override fun onTimeSelected(time: String) {
+    override fun onDateSelected(date: Long) {
+        val timePickerFragment = TimePickerDialogFragment(this)
+        timePickerFragment.show(requireActivity().supportFragmentManager, "timePicker")
+
+        dateTime = date
+    }
+
+    override fun onTimeSelected(time: Long) {
+        dateTime = dateTime?.plus(time)
+
         val slotPosition = slotAdapter.addItemToTheList(time)
 
         lifecycleScope.launch(Dispatchers.IO) {

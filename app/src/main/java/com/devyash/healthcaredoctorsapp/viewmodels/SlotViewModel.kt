@@ -12,13 +12,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SlotViewModel @Inject constructor(private var slotsRepository: SlotsRepository):ViewModel() {
+class SlotViewModel @Inject constructor(private val slotsRepository: SlotsRepository):ViewModel() {
 
     private val _slotFlow = MutableStateFlow<NetworkResult<String>?>(null)
     val slotFlow:StateFlow<NetworkResult<String>?> = _slotFlow
 
-    private val _allSlotFlow= MutableStateFlow<NetworkResult<List<String>>?>(null)
-    val allSlotFlow:StateFlow<NetworkResult<List<String>>?> = _allSlotFlow
+    private val _allSlotFlow= MutableStateFlow<NetworkResult<List<Long>>?>(null)
+    val allSlotFlow:StateFlow<NetworkResult<List<Long>>?> = _allSlotFlow
 
     fun addSlotToFirebase(slotTimings:SlotList,slotPosition:Int) = viewModelScope.launch{
         _slotFlow.value = NetworkResult.Loading()
