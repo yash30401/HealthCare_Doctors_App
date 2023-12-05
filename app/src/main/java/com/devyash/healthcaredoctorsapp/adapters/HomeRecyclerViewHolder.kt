@@ -15,7 +15,7 @@ sealed class HomeRecyclerViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
     var deleteClickListner: ((view:View,position:Int)-> Unit)?= null
     class SlotViewHolder(private val binding:SlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
         fun bind(slotTiming:SlotItem.slotTiming){
-            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            val simpleDateFormat = SimpleDateFormat("dd,MMMM yyyy HH:mm a")
             val formattedDate = simpleDateFormat.format(slotTiming.slotTiming)
 
             binding.tvSlotTiming.text = formattedDate.toString()
