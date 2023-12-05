@@ -52,6 +52,12 @@ class SlotAdapter(addButton:Drawable) :
         return listOfSlots.size
     }
 
+    fun showFirebaseList(slots:List<Long>){
+        for (slot in slots) {
+            addItemToTheList(slot)
+        }
+    }
+
     fun addItemToTheList(slotTiming:Long):Int{
         val newItem = SlotItem.slotTiming(slotTiming)
         val slotIndex = listOfSlots.size-1
@@ -59,12 +65,6 @@ class SlotAdapter(addButton:Drawable) :
         notifyItemInserted(slotIndex)
 
         return slotIndex
-    }
-
-    fun showFirebaseList(slots:List<Long>){
-        for (slot in slots) {
-            addItemToTheList(slot)
-        }
     }
 
     override fun onBindViewHolder(holder: HomeRecyclerViewHolder, position: Int) {

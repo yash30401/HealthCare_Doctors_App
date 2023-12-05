@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.repositories.SlotsRepository
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

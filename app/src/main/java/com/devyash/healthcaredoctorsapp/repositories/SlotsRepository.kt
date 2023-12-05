@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.sql.Time
 import javax.inject.Inject
 
 class SlotsRepository @Inject constructor(
@@ -47,19 +48,22 @@ class SlotsRepository @Inject constructor(
                     .collection("Slots")
 
             val querySnapshot = slotCollectionRef.get().await()
-            val listOfSlots = mutableListOf<Long>()
+            val listOfTimestamps = mutableListOf<Long>()
 
             for (document in querySnapshot) {
                 if (document.exists()) {
-                    val slotList = document.getLong("timings") ?: 0L
+                    val timestamp = document.getTimestamp("timings")
+                    val timestampInMillis = timestamp?.toDate()?.time ?: 0L
 
-                    listOfSlots.add(slotList)
+                    listOfTimestamps.add(timestampInMillis)
                 }
             }
-            emit(NetworkResult.Success(listOfSlots))
+            emit(NetworkResult.Success(listOfTimestamps))
         }.catch {
             NetworkResult.Error(it.message, null)
         }.flowOn(Dispatchers.IO)
     }
+
+
 
 }

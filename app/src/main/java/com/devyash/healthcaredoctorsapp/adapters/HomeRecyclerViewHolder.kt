@@ -6,6 +6,8 @@ import androidx.viewbinding.ViewBinding
 import com.devyash.healthcaredoctorsapp.databinding.AddSlotItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.databinding.SlotItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.models.SlotItem
+import java.text.SimpleDateFormat
+import java.util.Date
 
 sealed class HomeRecyclerViewHolder(binding: ViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -13,7 +15,10 @@ sealed class HomeRecyclerViewHolder(binding: ViewBinding) : RecyclerView.ViewHol
     var deleteClickListner: ((view:View,position:Int)-> Unit)?= null
     class SlotViewHolder(private val binding:SlotItemLayoutBinding):HomeRecyclerViewHolder(binding){
         fun bind(slotTiming:SlotItem.slotTiming){
-            binding.tvSlotTiming.text = slotTiming.slotTiming.toString()
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            val formattedDate = simpleDateFormat.format(slotTiming.slotTiming)
+
+            binding.tvSlotTiming.text = formattedDate.toString()
             binding.ivDelete.setOnClickListener {
                 deleteClickListner?.invoke(it,adapterPosition)
             }
