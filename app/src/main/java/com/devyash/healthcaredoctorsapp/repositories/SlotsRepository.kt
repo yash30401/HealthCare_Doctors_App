@@ -3,6 +3,7 @@ package com.devyash.healthcaredoctorsapp.repositories
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.util.await
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +26,10 @@ class SlotsRepository @Inject constructor(
     ): Flow<NetworkResult<String>> {
         return flow {
             val doctorId = currentUser?.uid.toString()
+
+            val timestampObject = Timestamp(java.util.Date(slotTimings.timings))
             val timingsMap = mapOf(
-                "timings" to slotTimings.timings
+                "timings" to timestampObject
             )
 
             firestore.collection("Doctors").document(doctorId).collection("Slots")
