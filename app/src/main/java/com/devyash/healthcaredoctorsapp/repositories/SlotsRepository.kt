@@ -29,6 +29,7 @@ class SlotsRepository @Inject constructor(
         return flow {
             val doctorId = currentUser?.uid.toString()
 
+            // Converting Long To Timestamp
             val timestampObject = Timestamp(java.util.Date(slotTimings.timings))
             Log.d("TIMECHECKING","TimeStamp in Repo:- ${slotTimings.timings}")
             val timingsMap = mapOf(
