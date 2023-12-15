@@ -25,14 +25,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.adapters.SlotAdapter
+import com.devyash.healthcaredoctorsapp.adapters.UpcomingAppointmentAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
 import com.devyash.healthcaredoctorsapp.models.SlotItem
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants.FETCHAPPOINTMENTS
 import com.devyash.healthcaredoctorsapp.others.Constants.GETTINGSLOTSFROMFIREBASE
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.SLOTTESTING
+import com.devyash.healthcaredoctorsapp.viewmodels.AppointmentViewModel
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.devyash.healthcaredoctorsapp.viewmodels.SlotViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -63,11 +66,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
 
     private val viewModel by viewModels<AuthViewModel>()
     private val slotViewModel by viewModels<SlotViewModel>()
+    private val appointmentViewModel by viewModels<AppointmentViewModel>()
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
     private lateinit var slotAdapter: SlotAdapter
+    private lateinit var upcomingAppointmentAdapter: UpcomingAppointmentAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -149,10 +154,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
         setupNavigationHeader()
 
         slotAdapter = SlotAdapter(ContextCompat.getDrawable(requireContext(),R.drawable.add)!!)
-        setupSlotRecylerView()
         setupUpcomingAppointmentRecylerView()
+        setupSlotRecylerView()
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -182,6 +186,47 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
             }"
         phoneNumber.text = hiddenPhoneNumberText
     }
+
+    private fun setupUpcomingAppointmentRecylerView() {
+        upcomingAppointmentAdapter = UpcomingAppointmentAdapter()
+        binding.rvUpcomingAppointments.apply {
+            adapter = upcomingAppointmentAdapter
+            layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+        }
+        fetchUpcomingAppointments()
+    }
+
+    private fun fetchUpcomingAppointments() {
+        lifecycleScope.launch{
+            appointmentViewModel.upcomingAppointments.collect{
+                when(it){
+                    is NetworkResult.Error ->{
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Problem in fetching Upcoming Appointments",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            Log.d(FETCHAPPOINTMENTS, "Error:- "+it.message.toString())
+                        }
+                    }
+                    is NetworkResult.Loading -> {
+                        Log.d(FETCHAPPOINTMENTS, "Loading:- "+it.message.toString())
+                    }
+                    is NetworkResult.Success -> {
+                        withContext(Dispatchers.Main) {
+                            upcomingAppointmentAdapter.setData(it.data?.toList()!!)
+                            Log.d(FETCHAPPOINTMENTS, "Success")
+                        }
+                    }
+                    else ->{
+
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun setupSlotRecylerView() {
         slotViewModel.getAllSlots()
