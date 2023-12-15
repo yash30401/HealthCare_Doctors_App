@@ -150,7 +150,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
 
         slotAdapter = SlotAdapter(ContextCompat.getDrawable(requireContext(),R.drawable.add)!!)
         setupSlotRecylerView()
-
+//        setupUpcomingAppointmentRecylerView()
     }
 
 
