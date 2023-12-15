@@ -40,6 +40,10 @@ class UpcomingAppointmentAdapter:RecyclerView.Adapter<UpcomingAppointmentAdapter
         holder.binding.tvAppointmentStatus.text = doctorAppointment.status
         holder.binding.tvAppointmentConsultText.text = doctorAppointment.typeOfConsultation
 
+        if(doctorAppointment.typeOfConsultation == "Clinic Visit"){
+            holder.binding.cvVideoCall.visibility = View.GONE
+        }
+
         val timeStampDate = doctorAppointment.dateTime.toDate()
         val simpleDateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
         val formattedDate = simpleDateFormat.format(timeStampDate)
