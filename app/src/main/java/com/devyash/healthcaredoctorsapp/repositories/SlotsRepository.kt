@@ -67,6 +67,16 @@ class SlotsRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    suspend fun deleteSlot(position:Int):Flow<NetworkResult<String>>{
+        return flow {
+            firestore.collection("Doctors").document(firebaseAuth.currentUser?.uid.toString()).collection("Slots")
+                .document(position.toString()).delete().await()
+
+            emit(NetworkResult.Success("Slot Deleted"))
+        }.catch {
+            NetworkResult.Error(it.message.toString(),null)
+        }.flowOn(Dispatchers.IO)
+    }
 
 
 }
