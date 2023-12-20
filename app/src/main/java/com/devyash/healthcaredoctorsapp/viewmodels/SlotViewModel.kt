@@ -21,6 +21,9 @@ class SlotViewModel @Inject constructor(private val slotsRepository: SlotsReposi
     private val _allSlotFlow= MutableStateFlow<NetworkResult<List<Long>>?>(null)
     val allSlotFlow:StateFlow<NetworkResult<List<Long>>?> = _allSlotFlow
 
+    private val _deleteSlot = MutableStateFlow<NetworkResult<String>?>(null)
+    val deleteSlot:StateFlow<NetworkResult<String>?> = _deleteSlot
+
     fun addSlotToFirebase(slotTimings:SlotList,slotPosition:Int) = viewModelScope.launch{
         _slotFlow.value = NetworkResult.Loading()
 
@@ -46,4 +49,18 @@ class SlotViewModel @Inject constructor(private val slotsRepository: SlotsReposi
             }
         }
     }
+
+    fun deleteSlot(position:Int) = viewModelScope.launch {
+        _deleteSlot.value = NetworkResult.Loading()
+
+        val result = slotsRepository.deleteSlot(position)
+        result.collect{
+            when(it){
+                is NetworkResult.Error -> _deleteSlot.value = NetworkResult.Error(it.message.toString())
+                is NetworkResult.Loading -> _deleteSlot.value = NetworkResult.Loading()
+                is NetworkResult.Success -> _deleteSlot.value = NetworkResult.Success(it.data.toString())
+            }
+        }
+    }
+
 }
