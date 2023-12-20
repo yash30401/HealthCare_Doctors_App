@@ -267,6 +267,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
                                         dialogInterface.dismiss()
                                     })
                                     .setPositiveButton("Delete",DialogInterface.OnClickListener{dialogInterface, i ->
+                                        slotAdapter.deleteSlot(position)
                                         Toast.makeText(requireContext(), "Slot Deleted", Toast.LENGTH_SHORT).show()
                                     }).show()
                             }

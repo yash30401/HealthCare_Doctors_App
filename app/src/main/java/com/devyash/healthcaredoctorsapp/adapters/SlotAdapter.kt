@@ -67,6 +67,11 @@ class SlotAdapter(addButton:Drawable) :
         return slotIndex
     }
 
+    fun deleteSlot(position: Int){
+        listOfSlots.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     override fun onBindViewHolder(holder: HomeRecyclerViewHolder, position: Int) {
         holder.itemClickListener = itemClickListener
         holder.deleteClickListner = deleteClickListner
