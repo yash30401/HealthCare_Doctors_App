@@ -67,6 +67,7 @@ class SlotAdapter(addButton:Drawable) :
         return slotIndex
     }
 
+
     fun deleteSlot(position: Int){
         listOfSlots.removeAt(position)
         notifyItemRemoved(position)

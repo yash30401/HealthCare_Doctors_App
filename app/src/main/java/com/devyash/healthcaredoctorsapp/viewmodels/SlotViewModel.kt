@@ -50,10 +50,10 @@ class SlotViewModel @Inject constructor(private val slotsRepository: SlotsReposi
         }
     }
 
-    fun deleteSlot(position:Int) = viewModelScope.launch {
+    fun deleteSlot(slotTiming:Long) = viewModelScope.launch {
         _deleteSlot.value = NetworkResult.Loading()
 
-        val result = slotsRepository.deleteSlot(position)
+        val result = slotsRepository.deleteSlot(slotTiming)
         result.collect{
             when(it){
                 is NetworkResult.Error -> _deleteSlot.value = NetworkResult.Error(it.message.toString())

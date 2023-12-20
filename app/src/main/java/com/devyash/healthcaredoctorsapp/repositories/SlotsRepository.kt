@@ -78,12 +78,30 @@ class SlotsRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun deleteSlot(position:Int):Flow<NetworkResult<String>>{
+    suspend fun deleteSlot(slotTiming:Long):Flow<NetworkResult<String>>{
         return flow {
-            firestore.collection("Doctors").document(firebaseAuth.currentUser?.uid.toString()).collection("Slots")
-                .document(position.toString()).delete().await()
+            val timestampObject = Timestamp(java.util.Date(slotTiming))
+            val truncatedTimestamp = Timestamp(
+                timestampObject.seconds - timestampObject.seconds % 60,
+                timestampObject.nanoseconds
+            )
+            val tolerance = 1000 // 1 second tolerance (adjust as needed)
 
-            emit(NetworkResult.Success("Slot Deleted"))
+            val slotCollectionRef = firestore.collection("Doctors").document(firebaseAuth.currentUser?.uid.toString())
+                .collection("Slots")
+
+            val query = slotCollectionRef
+                .whereGreaterThanOrEqualTo("timings", Timestamp(truncatedTimestamp.seconds - tolerance, 0))
+                .whereLessThanOrEqualTo("timings", Timestamp(truncatedTimestamp.seconds + tolerance, 0))
+
+
+            val querySnapshot = query.get().await()
+
+            for (document in querySnapshot) {
+                slotCollectionRef.document(document.id).delete().await()
+            }
+
+            emit(NetworkResult.Success("Slot(s) Deleted"))
         }.catch {
             NetworkResult.Error(it.message.toString(),null)
         }.flowOn(Dispatchers.IO)

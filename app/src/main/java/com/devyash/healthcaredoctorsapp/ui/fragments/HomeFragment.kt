@@ -259,7 +259,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
                                         dialogInterface.dismiss()
                                     })
                                     .setPositiveButton("Delete",DialogInterface.OnClickListener{dialogInterface, i ->
-                                        deleteSlotOnFirebase(position)
+                                        deleteSlotOnFirebase(position,it.data.toList())
                                     }).show()
                             }
 
@@ -287,9 +287,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
 
     }
 
-    private fun deleteSlotOnFirebase(position: Int) {
+    private fun deleteSlotOnFirebase(position: Int, slotList: List<Long>) {
         lifecycleScope.launch {
-            slotViewModel.deleteSlot(position)
+            slotViewModel.deleteSlot(slotList.get(position))
 
             slotViewModel.deleteSlot.collect{
                 when(it){
@@ -360,7 +360,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
 
                     is NetworkResult.Success -> {
                         Log.d(SLOTTESTING, "Success Block Data:- ${it?.data.toString()}")
-                        slotAdapter.addItemToTheList(time)
+                        withContext(Dispatchers.Main){
+                            slotAdapter.addItemToTheList(time)
+                        }
                     }
 
                     else -> {
