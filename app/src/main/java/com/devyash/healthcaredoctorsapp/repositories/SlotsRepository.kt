@@ -24,7 +24,6 @@ class SlotsRepository @Inject constructor(
 
     suspend fun addSlotToFirebase(
         slotTimings: SlotList,
-        slotPosition: Int
     ): Flow<NetworkResult<String>> {
         return flow {
             val doctorId = currentUser?.uid.toString()
@@ -32,13 +31,25 @@ class SlotsRepository @Inject constructor(
             // Converting Long To Timestamp
             val timestampObject = Timestamp(java.util.Date(slotTimings.timings))
             Log.d("TIMECHECKING","TimeStamp in Repo:- ${slotTimings.timings}")
-            val timingsMap = mapOf(
-                "timings" to timestampObject
-            )
+            val truncatedTimestamp = Timestamp(timestampObject.seconds - timestampObject.seconds % 60,timestampObject.nanoseconds)
 
-            firestore.collection("Doctors").document(doctorId).collection("Slots")
-                .document(slotPosition.toString()).set(timingsMap).await()
-            emit(NetworkResult.Success("Slot Added"))
+            val tolerance = 1000
+
+            val existingSlotQuery = firestore.collection("Doctors").document(doctorId).collection("Slots")
+                .whereGreaterThanOrEqualTo("timings", Timestamp(truncatedTimestamp.seconds - tolerance, 0))
+                .whereLessThanOrEqualTo("timings", Timestamp(truncatedTimestamp.seconds + tolerance, 0))
+
+            val existingSlotSnapshot = existingSlotQuery.get().await()
+
+            if(existingSlotSnapshot.isEmpty){
+                val timingsMap = mapOf("timings" to truncatedTimestamp)
+
+                firestore.collection("Doctors").document(doctorId).collection("Slots").add(timingsMap).await()
+
+                emit(NetworkResult.Success("Slot Added"))
+            }else{
+                emit(NetworkResult.Error("Slot with the same timing already exists"))
+            }
         }.catch {
             NetworkResult.Error(it.message, null)
         }.flowOn(Dispatchers.IO)

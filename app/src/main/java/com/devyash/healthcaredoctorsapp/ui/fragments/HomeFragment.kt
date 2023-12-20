@@ -18,18 +18,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.adapters.SlotAdapter
 import com.devyash.healthcaredoctorsapp.adapters.UpcomingAppointmentAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
-import com.devyash.healthcaredoctorsapp.models.SlotItem
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants.DELETESLOT
 import com.devyash.healthcaredoctorsapp.others.Constants.FETCHAPPOINTMENTS
 import com.devyash.healthcaredoctorsapp.others.Constants.GETTINGSLOTSFROMFIREBASE
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
@@ -44,15 +42,9 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneOffset
-import java.util.Calendar
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
@@ -267,8 +259,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
                                         dialogInterface.dismiss()
                                     })
                                     .setPositiveButton("Delete",DialogInterface.OnClickListener{dialogInterface, i ->
-                                        slotAdapter.deleteSlot(position)
-                                        Toast.makeText(requireContext(), "Slot Deleted", Toast.LENGTH_SHORT).show()
+                                        deleteSlotOnFirebase(position)
                                     }).show()
                             }
 
@@ -296,6 +287,40 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
 
     }
 
+    private fun deleteSlotOnFirebase(position: Int) {
+        lifecycleScope.launch {
+            slotViewModel.deleteSlot(position)
+
+            slotViewModel.deleteSlot.collect{
+                when(it){
+                    is NetworkResult.Error -> {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Problem in Deleting Slot",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            Log.d(DELETESLOT, "Error:- "+it.message.toString())
+                        }
+                    }
+                    is NetworkResult.Loading -> {
+                        Log.d(DELETESLOT, "Loading:- "+it.message.toString())
+                    }
+                    is NetworkResult.Success -> {
+                        withContext(Dispatchers.Main) {
+                            slotAdapter.deleteSlot(position)
+                            Log.d(DELETESLOT, "Success")
+                            Toast.makeText(requireContext(), "Slot Deleted", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -310,18 +335,23 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
     override fun onTimeSelected(time: Long) {
         Log.d("TIMECHECKING", "DATETIME:- $time")
 
-        val slotPosition = time?.let { slotAdapter.addItemToTheList(it) }
+
 
         lifecycleScope.launch(Dispatchers.IO) {
-            if (slotPosition != null) {
                 time?.let { SlotList(it) }
-                    ?.let { slotViewModel.addSlotToFirebase(it, slotPosition) }
-            }
+                    ?.let { slotViewModel.addSlotToFirebase(it) }
 
             slotViewModel.slotFlow.collect {
                 when (it) {
                     is NetworkResult.Error -> {
-                        Log.d(SLOTTESTING, "Error Block:- ${it?.message.toString()}")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                requireContext(),
+                                it.message.toString(),
+                                Toast.LENGTH_LONG
+                            ).show()
+                            Log.d(DELETESLOT, "Error:- "+it.message.toString())
+                        }
                     }
 
                     is NetworkResult.Loading -> {
@@ -330,6 +360,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
 
                     is NetworkResult.Success -> {
                         Log.d(SLOTTESTING, "Success Block Data:- ${it?.data.toString()}")
+                        slotAdapter.addItemToTheList(time)
                     }
 
                     else -> {
