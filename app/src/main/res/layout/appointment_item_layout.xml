@@ -189,7 +189,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tint="#353535"
-                        app:srcCompat="@drawable/baseline_chat_24" />
+                        app:srcCompat="@drawable/baseline_chat" />
 
                     <TextView
                         android:id="@+id/tvChat"
