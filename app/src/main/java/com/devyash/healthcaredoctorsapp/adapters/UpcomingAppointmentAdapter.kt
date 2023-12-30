@@ -42,6 +42,7 @@ class UpcomingAppointmentAdapter:RecyclerView.Adapter<UpcomingAppointmentAdapter
 
         if(doctorAppointment.typeOfConsultation == "Clinic Visit"){
             holder.binding.cvVideoCall.visibility = View.GONE
+            holder.binding.cvChat.visibility = View.VISIBLE
         }
 
         val timeStampDate = doctorAppointment.dateTime.toDate()
