@@ -25,8 +25,10 @@ import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.adapters.SlotAdapter
 import com.devyash.healthcaredoctorsapp.adapters.UpcomingAppointmentAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
+import com.devyash.healthcaredoctorsapp.models.DetailedDoctorAppointment
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.ChatClickListner
 import com.devyash.healthcaredoctorsapp.others.Constants.DELETESLOT
 import com.devyash.healthcaredoctorsapp.others.Constants.FETCHAPPOINTMENTS
 import com.devyash.healthcaredoctorsapp.others.Constants.GETTINGSLOTSFROMFIREBASE
@@ -48,7 +50,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener {
+class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener, ChatClickListner {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -180,7 +182,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
     }
 
     private fun setupUpcomingAppointmentRecylerView() {
-        upcomingAppointmentAdapter = UpcomingAppointmentAdapter()
+        upcomingAppointmentAdapter = UpcomingAppointmentAdapter(this)
         binding.rvUpcomingAppointments.apply {
             adapter = upcomingAppointmentAdapter
             layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
@@ -371,6 +373,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener 
                 }
             }
         }
+    }
+
+    override fun onClick(doctorAppointment: DetailedDoctorAppointment) {
+        val action = HomeFragmentDirections.actionHomeFragmentToChattingFragment(doctorAppointment)
+        findNavController().navigate(action)
     }
 
 }

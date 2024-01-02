@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.AppointmentItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.models.DetailedDoctorAppointment
+import com.devyash.healthcaredoctorsapp.others.ChatClickListner
 import com.devyash.healthcaredoctorsapp.utils.DoctorDiffUtil
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class UpcomingAppointmentAdapter:RecyclerView.Adapter<UpcomingAppointmentAdapter.UpcomingAppointmentsViewHolder>() {
+class UpcomingAppointmentAdapter(private val chatClickListner: ChatClickListner):RecyclerView.Adapter<UpcomingAppointmentAdapter.UpcomingAppointmentsViewHolder>() {
 
     private val asyncListDiffer = AsyncListDiffer<DetailedDoctorAppointment>(this,DoctorDiffUtil())
     inner class UpcomingAppointmentsViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
@@ -45,16 +46,20 @@ class UpcomingAppointmentAdapter:RecyclerView.Adapter<UpcomingAppointmentAdapter
             holder.binding.cvChat.visibility = View.VISIBLE
         }
 
-        val timeStampDate = doctorAppointment.dateTime.toDate()
+        val timeStampDate = doctorAppointment.dateTime?.toDate()
         val simpleDateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
         val formattedDate = simpleDateFormat.format(timeStampDate)
 
-        val timeStampTime = doctorAppointment.dateTime.toDate().time
+        val timeStampTime = doctorAppointment.dateTime?.toDate()?.time
         val simpleDateFormatTime = SimpleDateFormat("h a", Locale.getDefault())
         val formattedTime = simpleDateFormatTime.format(timeStampTime)
 
         holder.binding.tvAppointmentDate.text = formattedDate.toString()
         holder.binding.tvAppointmentTime.text = formattedTime.toString()
+
+        holder.binding.cvChat.setOnClickListener {
+            chatClickListner.onClick(doctorAppointment)
+        }
     }
 
     fun setData(newList:List<DetailedDoctorAppointment>){

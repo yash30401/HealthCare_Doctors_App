@@ -10,6 +10,7 @@ object Constants {
     const val HEADERLAYOUTTAG = "HEADERLAYOUTTAG"
     const val FETCHAPPOINTMENTS = "FETCHAPPOINTMENTS"
     const val DELETESLOT = "DELETESLOT"
+    const val CHATROOMTESTING = "CHATROOMTESTING"
 
     // Coundown Time
     const val COUNTDOWNTIMEINMINUTE = 1

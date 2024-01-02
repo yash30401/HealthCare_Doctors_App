@@ -93,5 +93,9 @@
         android:id="@+id/chattingFragment"
         android:name="com.devyash.healthcaredoctorsapp.ui.fragments.ChattingFragment"
         android:label="fragment_chatting"
-        tools:layout="@layout/fragment_chatting" />
+        tools:layout="@layout/fragment_chatting" >
+        <argument
+            android:name="detailedDoctorAppointment"
+            app:argType="com.devyash.healthcaredoctorsapp.models.DetailedDoctorAppointment" />
+    </fragment>
 </navigation>
