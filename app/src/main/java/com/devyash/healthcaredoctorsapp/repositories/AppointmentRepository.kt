@@ -32,7 +32,8 @@ class AppointmentRepository @Inject constructor(
                         val detailedDoctorAppointment = DetailedDoctorAppointment(
                             status = document.getString("status") ?: "",
                             typeOfConsultation = document.getString("typeOfConsultation") ?: "",
-                            dateTime = document.getTimestamp("dateTime")!!
+                            dateTime = document.getTimestamp("dateTime")!!,
+                            userReference = document.getDocumentReference("usersReference")!!
                         )
 
                         listOfAppointments.add(detailedDoctorAppointment)

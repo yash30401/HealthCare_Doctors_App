@@ -60,6 +60,9 @@
         <action
             android:id="@+id/action_homeFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_chattingFragment"
+            app:destination="@id/chattingFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -86,4 +89,9 @@
             android:id="@+id/action_loginFragment_to_otpFragment"
             app:destination="@id/otpFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/chattingFragment"
+        android:name="com.devyash.healthcaredoctorsapp.ui.fragments.ChattingFragment"
+        android:label="fragment_chatting"
+        tools:layout="@layout/fragment_chatting" />
 </navigation>
