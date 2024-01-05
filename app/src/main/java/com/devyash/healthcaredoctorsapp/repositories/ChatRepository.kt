@@ -37,6 +37,7 @@ class ChatRepository @Inject constructor(
                         chatRoomId,
                         Pair(firebaseAuth.currentUser!!.uid, userId),
                         Timestamp.now(),
+                        "",
                         ""
                     )
                     firestore.collection("ChatRoom").document(chatRoomId).set(chatRoom).await()
@@ -59,7 +60,8 @@ class ChatRepository @Inject constructor(
                         userIds = userIds ?: Pair("", ""),
                         lastMessageTimestamp = getChatRoomReference.getTimestamp("lastMessageTimestamp")!!,
                         lastMessageSenderId = getChatRoomReference.getString("lastMessageSenderId")
-                            ?: ""
+                            ?: "",
+                        lastMessage = getChatRoomReference.getString("lastMessage")?:""
                     )
                 }
                 emit(NetworkResult.Success(chatRoom))
@@ -88,6 +90,7 @@ class ChatRepository @Inject constructor(
                     .orderBy("timestamp", Query.Direction.DESCENDING).get().await()
                 val listOfMessages = mutableListOf<ChatMessage>()
 
+
                 for(document in chatRoomReference){
                     if(document.exists()){
                         val chatMessage = ChatMessage(
@@ -112,6 +115,7 @@ class ChatRepository @Inject constructor(
             try {
                 chatRoom.lastMessageTimestamp = Timestamp.now()
                 chatRoom.lastMessageSenderId = firebaseAuth.currentUser?.uid.toString()
+                chatRoom.lastMessage = message
                 firestore.collection("ChatRoom").document(chatRoomId).set(chatRoom).await()
 
                 val chatMessage = ChatMessage(
@@ -131,4 +135,5 @@ class ChatRepository @Inject constructor(
             NetworkResult.Error(it.message.toString(), null)
         }.flowOn(Dispatchers.IO)
     }
+
 }
