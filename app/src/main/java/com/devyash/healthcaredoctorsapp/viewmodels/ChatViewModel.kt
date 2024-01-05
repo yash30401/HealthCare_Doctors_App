@@ -1,10 +1,12 @@
 package com.devyash.healthcaredoctorsapp.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devyash.healthcaredoctorsapp.models.ChatMessage
 import com.devyash.healthcaredoctorsapp.models.ChatRoom
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants.RECENTCHATS
 import com.devyash.healthcaredoctorsapp.repositories.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +24,10 @@ class ChatViewModel @Inject constructor(private val chatRepository: ChatReposito
 
     private val _sendMessage = MutableStateFlow<NetworkResult<ChatMessage>?>(null)
     val sendMessage:StateFlow<NetworkResult<ChatMessage>?> = _sendMessage
+
+    private val _recentChats = MutableStateFlow<NetworkResult<List<Pair<ChatRoom,String>>>?>(null)
+    val recentChats: StateFlow<NetworkResult<List<Pair<ChatRoom,String>>>?> = _recentChats
+
 
     fun getOrCreateChatRoom(userId:String) = viewModelScope.launch {
         _getOrCreateChatRoom.value = NetworkResult.Loading()
@@ -71,6 +77,26 @@ class ChatViewModel @Inject constructor(private val chatRepository: ChatReposito
             }
         }catch (e:Exception){
             _sendMessage.value = NetworkResult.Error(e.message)
+        }
+    }
+
+    fun getRecentChats() = viewModelScope.launch {
+        _recentChats.value = NetworkResult.Loading()
+        Log.d(RECENTCHATS,"Entering Viewmodel")
+        try {
+            val result = chatRepository.getRecentChats()
+            result.collect {
+                when (it) {
+                    is NetworkResult.Error -> _recentChats.value = NetworkResult.Error(it.message)
+                    is NetworkResult.Loading -> _recentChats.value = NetworkResult.Loading()
+                    is NetworkResult.Success -> _recentChats.value =
+                        NetworkResult.Success(it.data!!)
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.d(RECENTCHATS,"Viewmodel Catch block ${e.message.toString()}")
+            _recentChats.value = NetworkResult.Error(e.message.toString())
         }
     }
 }
