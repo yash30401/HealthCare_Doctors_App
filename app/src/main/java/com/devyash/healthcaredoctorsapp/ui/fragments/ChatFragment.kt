@@ -3,18 +3,20 @@ package com.devyash.healthcaredoctorsapp.ui.fragments
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.adapters.RecentChatAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentChatBinding
+import com.devyash.healthcaredoctorsapp.models.DetailedDoctorAppointment
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.others.Constants.RECENTCHATS
+import com.devyash.healthcaredoctorsapp.others.OnRecentChatClickListner
 import com.devyash.healthcaredoctorsapp.viewmodels.ChatViewModel
+import com.google.firebase.firestore.DocumentReference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,7 +24,7 @@ import kotlinx.coroutines.withContext
 
 
 @AndroidEntryPoint
-class ChatFragment : Fragment(R.layout.fragment_chat) {
+class ChatFragment : Fragment(R.layout.fragment_chat),OnRecentChatClickListner {
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
     lateinit var recentChatAdapter: RecentChatAdapter
@@ -37,7 +39,7 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
     }
 
     private fun setupRecentChatRecylerView() {
-        recentChatAdapter = RecentChatAdapter()
+        recentChatAdapter = RecentChatAdapter(this)
         binding.rvChats.apply {
             adapter = recentChatAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -70,5 +72,12 @@ class ChatFragment : Fragment(R.layout.fragment_chat) {
                 }
             }
         }
+    }
+
+    override fun onClick(second: String) {
+        val action = ChatFragmentDirections.actionChatFragmentToChattingFragment(
+            second
+        )
+        findNavController().navigate(action)
     }
 }

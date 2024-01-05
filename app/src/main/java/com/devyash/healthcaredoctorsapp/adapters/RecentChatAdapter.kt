@@ -5,16 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.RecentChatItemLayoutBinding
 import com.devyash.healthcaredoctorsapp.models.ChatRoom
+import com.devyash.healthcaredoctorsapp.others.OnRecentChatClickListner
 import com.devyash.healthcaredoctorsapp.utils.DoctorDiffUtil
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class RecentChatAdapter: RecyclerView.Adapter<RecentChatAdapter.RecentChatViewHolder>() {
+class RecentChatAdapter(private val onRecentChatClickListner: OnRecentChatClickListner): RecyclerView.Adapter<RecentChatAdapter.RecentChatViewHolder>() {
 
     private val asyncListDiffer =
         AsyncListDiffer<Pair<ChatRoom, String>>(this, DoctorDiffUtil())
@@ -43,6 +43,10 @@ class RecentChatAdapter: RecyclerView.Adapter<RecentChatAdapter.RecentChatViewHo
         holder.binding.tvLastMesaage.text = recentChat.first.lastMessage
         holder.binding.tvLastTimeStamp.text =
             convertTimestampToTimeString(recentChat.first.lastMessageTimestamp.toDate().time)
+
+        holder.binding.itemCardView.setOnClickListener {
+            onRecentChatClickListner.onClick(recentChat.second)
+        }
 
     }
 

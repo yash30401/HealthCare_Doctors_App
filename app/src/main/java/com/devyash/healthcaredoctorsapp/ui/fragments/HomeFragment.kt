@@ -375,8 +375,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
         }
     }
 
-    override fun onClick(doctorAppointment: DetailedDoctorAppointment) {
-        val action = HomeFragmentDirections.actionHomeFragmentToChattingFragment(doctorAppointment)
+    override fun onClick(userId: String) {
+        val action = HomeFragmentDirections.actionHomeFragmentToChattingFragment(userId)
         findNavController().navigate(action)
     }
 

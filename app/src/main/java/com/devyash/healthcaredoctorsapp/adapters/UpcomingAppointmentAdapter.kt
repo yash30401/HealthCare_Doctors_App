@@ -58,7 +58,7 @@ class UpcomingAppointmentAdapter(private val chatClickListner: ChatClickListner)
         holder.binding.tvAppointmentTime.text = formattedTime.toString()
 
         holder.binding.cvChat.setOnClickListener {
-            chatClickListner.onClick(doctorAppointment)
+            chatClickListner.onClick(doctorAppointment.userReference.id.toString())
         }
     }
 

@@ -68,7 +68,11 @@
         android:id="@+id/chatFragment"
         android:name="com.devyash.healthcaredoctorsapp.ui.fragments.ChatFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat" >
+        <action
+            android:id="@+id/action_chatFragment_to_chattingFragment"
+            app:destination="@id/chattingFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.devyash.healthcaredoctorsapp.ui.fragments.ProfileFragment"
@@ -95,7 +99,7 @@
         android:label="fragment_chatting"
         tools:layout="@layout/fragment_chatting" >
         <argument
-            android:name="detailedDoctorAppointment"
-            app:argType="com.devyash.healthcaredoctorsapp.models.DetailedDoctorAppointment" />
+            android:name="userId"
+            app:argType="string" />
     </fragment>
 </navigation>

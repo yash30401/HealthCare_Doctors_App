@@ -51,7 +51,7 @@ class ChattingFragment : Fragment(R.layout.fragment_chatting) {
         activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
         activity?.actionBar?.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
 
-        val username = args.detailedDoctorAppointment.userReference.id
+        val username = args.userId
         toolbarLayout.tvUserName.text = username.subSequence(0,5).toString()+"..."
 
         toolbar.setNavigationOnClickListener {
@@ -73,7 +73,7 @@ class ChattingFragment : Fragment(R.layout.fragment_chatting) {
 
     private fun getOrCreateChatRoom() {
         lifecycleScope.launch {
-            chatViewModel.getOrCreateChatRoom(args.detailedDoctorAppointment.userReference.id)
+            chatViewModel.getOrCreateChatRoom(args.userId)
             chatViewModel.getOrCreateChatRoom.collect{
                 when(it){
                     is NetworkResult.Error -> {
