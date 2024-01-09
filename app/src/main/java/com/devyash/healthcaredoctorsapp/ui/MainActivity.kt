@@ -4,11 +4,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.databinding.ActivityMainBinding
+import com.devyash.healthcaredoctorsapp.networking.NetworkResult
+import com.devyash.healthcaredoctorsapp.others.Constants.FIREBASEMESSAGINTOKEN
+import com.devyash.healthcaredoctorsapp.viewmodels.FirebaseMessagingViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
@@ -16,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+
+    private val firebaseMessagingViewModel by viewModels<FirebaseMessagingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
+        getFCMToken()
     }
 
     private fun hideBottomNavOnAuthFragment() {
@@ -107,6 +115,27 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun getFCMToken() {
+        val token = firebaseMessagingViewModel.getFCMToken()
+
+        lifecycleScope.launch{
+            firebaseMessagingViewModel.token.collect{
+                when(it){
+                    is NetworkResult.Error -> {
+                        Log.d(FIREBASEMESSAGINTOKEN,"Error Block:- ${it.message}")
+                    }
+                    is NetworkResult.Loading -> {
+                        Log.d(FIREBASEMESSAGINTOKEN,"Loading Block:- ${it.message}")
+                    }
+                    is NetworkResult.Success -> {
+                        Log.d(FIREBASEMESSAGINTOKEN,"Success Block:- ${it.data.toString()}")
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     override fun onDestroy() {

@@ -3,6 +3,7 @@ package com.devyash.healthcaredoctorsapp.di
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
@@ -29,5 +30,8 @@ class FirebaseModule {
 
     @Provides
     fun provideStorageReference():StorageReference = provideFirebaseStorage().reference
+
+    @Provides
+    fun providesFirebaseMessageing() = FirebaseMessaging.getInstance()
 
 }

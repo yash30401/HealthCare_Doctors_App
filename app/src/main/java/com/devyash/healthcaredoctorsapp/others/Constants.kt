@@ -11,6 +11,9 @@ object Constants {
     const val FETCHAPPOINTMENTS = "FETCHAPPOINTMENTS"
     const val DELETESLOT = "DELETESLOT"
 
+    // FirebaseMessaging
+    const val FIREBASEMESSAGINTOKEN = "FIREBASEMESSAGINTOKEN"
+
     // Chats
     const val CHATROOMTESTING = "CHATROOMTESTING"
     const val RECENTCHATS = "RECENTCHATS"
