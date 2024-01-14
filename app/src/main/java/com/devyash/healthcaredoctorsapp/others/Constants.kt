@@ -13,6 +13,7 @@ object Constants {
 
     // FirebaseMessaging
     const val FIREBASEMESSAGINTOKEN = "FIREBASEMESSAGINTOKEN"
+    const val URL = "https://fcm.googleapis.com/fcm/send"
 
     // Chats
     const val CHATROOMTESTING = "CHATROOMTESTING"
