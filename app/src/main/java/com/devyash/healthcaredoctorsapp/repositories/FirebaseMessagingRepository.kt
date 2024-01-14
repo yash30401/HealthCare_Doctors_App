@@ -25,7 +25,7 @@ class FirebaseMessagingRepository @Inject constructor(
                 val token = firebaseMessaging.token.await()
 
                 firestore.collection("Doctors").document(firebaseAuth.currentUser?.uid.toString())
-                    .collection("FirebaseMessaging").add(FirebaseMessagingData(token)).await()
+                    .collection("FirebaseMessaging").document("token").set(FirebaseMessagingData(token)).await()
 
                 emit(NetworkResult.Success(token.toString()))
             }catch (e:Exception){
@@ -35,4 +35,6 @@ class FirebaseMessagingRepository @Inject constructor(
             NetworkResult.Error(it.message.toString(),null)
         }.flowOn(Dispatchers.IO)
     }
+
+
 }
