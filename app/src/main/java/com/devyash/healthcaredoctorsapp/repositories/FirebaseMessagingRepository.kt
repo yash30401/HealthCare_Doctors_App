@@ -35,6 +35,7 @@ class FirebaseMessagingRepository @Inject constructor(
             try {
                 val token = firebaseMessaging.token.await()
 
+
                 firestore.collection("Doctors").document(firebaseAuth.currentUser?.uid.toString())
                     .collection("FirebaseMessaging").document("token").set(FirebaseMessagingData(token)).await()
 
@@ -46,6 +47,7 @@ class FirebaseMessagingRepository @Inject constructor(
             NetworkResult.Error(it.message.toString(),null)
         }.flowOn(Dispatchers.IO)
     }
+
 
     suspend fun callApi(jsonObject: JSONObject): Flow<NetworkResult<String>> {
         return flow {
