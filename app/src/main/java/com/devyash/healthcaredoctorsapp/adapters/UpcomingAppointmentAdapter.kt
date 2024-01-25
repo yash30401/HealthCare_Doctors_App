@@ -13,7 +13,7 @@ import com.devyash.healthcaredoctorsapp.utils.DoctorDiffUtil
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class UpcomingAppointmentAdapter(private val chatClickListner: ChatClickListner):RecyclerView.Adapter<UpcomingAppointmentAdapter.UpcomingAppointmentsViewHolder>() {
+class UpcomingAppointmentAdapter(private val chatClickListner: ChatClickListner, private val videoCallClickListner: VideoCallClickListner):RecyclerView.Adapter<UpcomingAppointmentAdapter.UpcomingAppointmentsViewHolder>() {
 
     private val asyncListDiffer = AsyncListDiffer<DetailedDoctorAppointment>(this,DoctorDiffUtil())
     inner class UpcomingAppointmentsViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
@@ -60,9 +60,17 @@ class UpcomingAppointmentAdapter(private val chatClickListner: ChatClickListner)
         holder.binding.cvChat.setOnClickListener {
             chatClickListner.onClick(doctorAppointment.userReference.id.toString())
         }
+
+        holder.binding.cvVideoCall.setOnClickListener {
+            videoCallClickListner.onclick(doctorAppointment.userReference.id)
+        }
     }
 
     fun setData(newList:List<DetailedDoctorAppointment>){
         asyncListDiffer.submitList(newList)
+    }
+
+    interface VideoCallClickListner{
+        fun onclick(userUid: String)
     }
 }

@@ -1,6 +1,8 @@
 package com.devyash.healthcaredoctorsapp.ui.fragments
 
+import android.Manifest
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -35,6 +37,7 @@ import com.devyash.healthcaredoctorsapp.others.Constants.GETTINGSLOTSFROMFIREBAS
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.SLOTTESTING
+import com.devyash.healthcaredoctorsapp.ui.CallActivity
 import com.devyash.healthcaredoctorsapp.viewmodels.AppointmentViewModel
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
 import com.devyash.healthcaredoctorsapp.viewmodels.SlotViewModel
@@ -42,6 +45,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,7 +54,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener, ChatClickListner {
+class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener, ChatClickListner, UpcomingAppointmentAdapter.VideoCallClickListner {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -182,7 +186,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
     }
 
     private fun setupUpcomingAppointmentRecylerView() {
-        upcomingAppointmentAdapter = UpcomingAppointmentAdapter(this)
+        upcomingAppointmentAdapter = UpcomingAppointmentAdapter(this,this)
         binding.rvUpcomingAppointments.apply {
             adapter = upcomingAppointmentAdapter
             layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
@@ -378,6 +382,24 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
     override fun onClick(userId: String) {
         val action = HomeFragmentDirections.actionHomeFragmentToChattingFragment(userId)
         findNavController().navigate(action)
+    }
+
+    override fun onclick(userUId: String) {
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA
+            ).request{ allGranted, _ ,_ ->
+                if (allGranted){
+                    startActivity(
+                        Intent(requireContext(), CallActivity::class.java)
+                            .putExtra("doctorUId",firebaseAuth.currentUser?.uid.toString())
+                            .putExtra("userUId",userUId)
+                    )
+                } else {
+                    Toast.makeText(requireContext(),"you should accept all permissions",Toast.LENGTH_LONG).show()
+                }
+            }
     }
 
 }

@@ -18,6 +18,10 @@ object Constants {
     // Chats
     const val CHATROOMTESTING = "CHATROOMTESTING"
     const val RECENTCHATS = "RECENTCHATS"
+
+    //Video Calling
+    const val VIDEOCALLINGWEBRTC = "VIDEOCALLINGWEBRTC"
+
     // Coundown Time
     const val COUNTDOWNTIMEINMINUTE = 1
 
