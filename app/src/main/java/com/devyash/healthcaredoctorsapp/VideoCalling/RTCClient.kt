@@ -1,8 +1,8 @@
-package com.healthcare.yash.preeti.VideoCalling
+package com.devyash.healthcaredoctorsapp.VideoCalling
 
 import android.app.Application
-import com.healthcare.yash.preeti.VideoCalling.models.MessageModel
-import com.healthcare.yash.preeti.VideoCalling.repository.SocketRepository
+import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
+import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
 import org.webrtc.CameraVideoCapturer

@@ -1,4 +1,4 @@
-package com.healthcare.yash.preeti.VideoCalling.models
+package com.devyash.healthcaredoctorsapp.VideoCalling.models.IceCandidateModel
 
 class IceCandidateModel(
     val sdpMid:String,

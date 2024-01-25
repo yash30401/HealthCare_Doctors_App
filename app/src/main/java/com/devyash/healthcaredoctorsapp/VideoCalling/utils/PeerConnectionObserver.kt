@@ -1,4 +1,4 @@
-package com.healthcare.yash.preeti.VideoCalling.utils
+package com.devyash.healthcaredoctorsapp.VideoCalling.utils
 
 import org.webrtc.DataChannel
 import org.webrtc.IceCandidate

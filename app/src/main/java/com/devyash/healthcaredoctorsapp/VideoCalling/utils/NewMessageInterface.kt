@@ -1,6 +1,6 @@
-package com.healthcare.yash.preeti.VideoCalling.utils
+package com.devyash.healthcaredoctorsapp.VideoCalling.utils
 
-import com.healthcare.yash.preeti.VideoCalling.models.MessageModel
+import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 
 
 interface NewMessageInterface {

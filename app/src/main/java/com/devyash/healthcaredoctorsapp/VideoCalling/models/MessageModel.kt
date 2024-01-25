@@ -1,4 +1,4 @@
-package com.healthcare.yash.preeti.VideoCalling.models
+package com.devyash.healthcaredoctorsapp.models.MessageModel
 
 data class MessageModel(
     val type: String,

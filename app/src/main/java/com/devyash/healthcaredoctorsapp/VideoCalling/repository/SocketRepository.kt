@@ -1,16 +1,16 @@
-package com.healthcare.yash.preeti.VideoCalling.repository
+package com.devyash.healthcaredoctorsapp.VideoCalling.repository
 
 import android.util.Log
+import com.devyash.healthcaredoctorsapp.VideoCalling.utils.NewMessageInterface
+import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import com.google.gson.Gson
-import com.healthcare.yash.preeti.VideoCalling.models.MessageModel
-import com.healthcare.yash.preeti.VideoCalling.utils.NewMessageInterface
-import com.healthcare.yash.preeti.other.Constants.VIDEOCALLINGWEBRTC
+import com.devyash.healthcaredoctorsapp.others.Constants.VIDEOCALLINGWEBRTC
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import java.lang.Exception
 import java.net.URI
 
-class SocketRepository(private val messageInterface:NewMessageInterface) {
+class SocketRepository(private val messageInterface: NewMessageInterface) {
     private var webSocket:WebSocketClient?=null
     private var UID:String?=null
     private val TAG = "SocketRepository"

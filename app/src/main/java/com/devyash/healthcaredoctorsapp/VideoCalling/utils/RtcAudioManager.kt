@@ -1,4 +1,4 @@
-package com.healthcare.yash.preeti.VideoCalling.utils
+package com.devyash.healthcaredoctorsapp.VideoCalling.utils
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver

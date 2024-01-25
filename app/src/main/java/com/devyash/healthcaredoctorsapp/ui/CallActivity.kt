@@ -6,16 +6,16 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.devyash.healthcaredoctorsapp.R
+import com.devyash.healthcaredoctorsapp.VideoCalling.RTCClient
+import com.devyash.healthcaredoctorsapp.VideoCalling.models.IceCandidateModel.IceCandidateModel
+import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
+import com.devyash.healthcaredoctorsapp.VideoCalling.utils.NewMessageInterface
+import com.devyash.healthcaredoctorsapp.VideoCalling.utils.PeerConnectionObserver
+import com.devyash.healthcaredoctorsapp.VideoCalling.utils.RtcAudioManager
 import com.devyash.healthcaredoctorsapp.databinding.ActivityCallBinding
+import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import com.devyash.healthcaredoctorsapp.others.Constants
 import com.google.gson.Gson
-import com.healthcare.yash.preeti.VideoCalling.RTCClient
-import com.healthcare.yash.preeti.VideoCalling.models.IceCandidateModel
-import com.healthcare.yash.preeti.VideoCalling.models.MessageModel
-import com.healthcare.yash.preeti.VideoCalling.repository.SocketRepository
-import com.healthcare.yash.preeti.VideoCalling.utils.NewMessageInterface
-import com.healthcare.yash.preeti.VideoCalling.utils.PeerConnectionObserver
-import com.healthcare.yash.preeti.VideoCalling.utils.RtcAudioManager
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
 import org.webrtc.SessionDescription
@@ -42,8 +42,8 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
     }
 
     private fun init(){
-        uid = intent.getStringExtra("doctorUid")
-        targetUid = intent.getStringExtra("useruid").toString()
+        uid = intent.getStringExtra("doctorUId")
+        targetUid = intent.getStringExtra("userUId").toString()
         socketRepository = SocketRepository(this)
         uid?.let { socketRepository?.initSocket(it) }
         rtcClient = RTCClient(application,uid!!,socketRepository!!, object : PeerConnectionObserver() {
@@ -67,11 +67,13 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 Log.d(Constants.VIDEOCALLINGWEBRTC, "onAddStream: $p0")
             }
         })
+        rtcClient?.initializeSurfaceView(binding!!.localView)
+        rtcClient?.startLocalVideo(binding!!.localView)
         rtcAudioManager.setDefaultAudioDevice(RtcAudioManager.AudioDevice.SPEAKER_PHONE)
 
         socketRepository?.sendMessageToSocket(
             MessageModel(
-                "start_call","yash",targetUid,null
+                "start_call",uid,targetUid,null
             )
         )
         binding?.switchCameraButton?.setOnClickListener {
