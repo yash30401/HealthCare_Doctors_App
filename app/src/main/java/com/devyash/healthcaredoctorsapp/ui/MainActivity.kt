@@ -10,7 +10,10 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.devyash.healthcaredoctorsapp.R
+import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
+import com.devyash.healthcaredoctorsapp.VideoCalling.utils.NewMessageInterface
 import com.devyash.healthcaredoctorsapp.databinding.ActivityMainBinding
+import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
 import com.devyash.healthcaredoctorsapp.others.Constants.FIREBASEMESSAGINTOKEN
 import com.devyash.healthcaredoctorsapp.viewmodels.FirebaseMessagingViewModel
@@ -25,7 +28,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),NewMessageInterface {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -36,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var firebaseAuth: FirebaseAuth
 
     private val firebaseMessagingViewModel by viewModels<FirebaseMessagingViewModel>()
-
+    lateinit var socketRepository:SocketRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -44,6 +47,9 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
+
+        socketRepository = SocketRepository(this)
+        socketRepository.initSocket(firebaseAuth.uid.toString())
 
         binding.bottomNav.setupWithNavController(navController)
         hideBottomNavOnAuthFragment()
@@ -141,5 +147,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onNewMessage(message: MessageModel) {
+
     }
 }

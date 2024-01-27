@@ -26,6 +26,7 @@ class SocketRepository(private val messageInterface: NewMessageInterface) {
                         "store_user",uid,null,null
                     )
                 )
+
             }
 
             override fun onMessage(message: String?) {
