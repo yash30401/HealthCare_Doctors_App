@@ -67,8 +67,9 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 Log.d(Constants.VIDEOCALLINGWEBRTC, "onAddStream: $p0")
             }
         })
-        rtcClient?.initializeSurfaceView(binding!!.localView)
-        rtcClient?.startLocalVideo(binding!!.localView)
+
+//        rtcClient?.initializeSurfaceView(binding!!.localView)
+//        rtcClient?.startLocalVideo(binding!!.localView)
         rtcAudioManager.setDefaultAudioDevice(RtcAudioManager.AudioDevice.SPEAKER_PHONE)
 
         socketRepository?.sendMessageToSocket(
@@ -166,6 +167,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 }
             }
             "offer_received" ->{
+                Log.d("OFEERWEBRTC","Recived")
                 runOnUiThread {
                     setIncomingCallLayoutVisible()
                     binding?.incomingNameTV?.text = "${message.uid.toString()} is calling you"
@@ -226,4 +228,5 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
     private fun setCallLayoutVisible() {
         binding?.callLayout?.visibility = View.VISIBLE
     }
+
 }

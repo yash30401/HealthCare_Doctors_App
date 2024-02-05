@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity(),NewMessageInterface {
             PlayIntegrityAppCheckProviderFactory.getInstance(),
         )
 
+
         binding.bottomNav.setOnNavigationItemSelectedListener {menuItem->
             when(menuItem.itemId){
                 R.id.home -> {
