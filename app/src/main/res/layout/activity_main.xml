@@ -67,6 +67,7 @@
        android:layout_width="match_parent"
        android:id="@+id/callLayout"
        android:visibility="gone"
+       android:elevation="20dp"
        android:layout_height="match_parent">
       <org.webrtc.SurfaceViewRenderer
           android:id="@+id/remote_view"

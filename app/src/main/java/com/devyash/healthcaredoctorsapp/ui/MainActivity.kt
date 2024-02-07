@@ -114,6 +114,7 @@ class MainActivity : AppCompatActivity(),NewMessageInterface,UpcomingAppointment
         getFCMToken()
         init()
 
+        getPermissionsForVideoCall()
     }
 
 
@@ -253,10 +254,27 @@ class MainActivity : AppCompatActivity(),NewMessageInterface,UpcomingAppointment
     }
 
 
+    private fun getPermissionsForVideoCall() {
+        PermissionX.init(this)
+            .permissions(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA
+            ).request{ allGranted, _ ,_ ->
+                if (allGranted){
+
+
+                } else {
+                    Toast.makeText(this,"you should accept all permissions", Toast.LENGTH_LONG).show()
+                }
+            }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        rtcClient?.endCall() // Close any existing WebRTC connections
+        rtcClient = null
         socketRepository.closeConnection()
     }
 
