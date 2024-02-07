@@ -170,7 +170,7 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                 Log.d("OFEERWEBRTC","Recived")
                 runOnUiThread {
                     setIncomingCallLayoutVisible()
-                    binding?.incomingNameTV?.text = "${message.uid.toString()} is calling you"
+                    binding?.incomingNameTV?.text = "${message.name.toString()} is calling you"
                     binding?.acceptButton?.setOnClickListener {
                         setIncomingCallLayoutGone()
                         setCallLayoutVisible()
@@ -185,8 +185,8 @@ class CallActivity : AppCompatActivity(), NewMessageInterface {
                             message.data.toString()
                         )
                         rtcClient?.onRemoteSessionReceived(session)
-                        rtcClient?.answer(message.uid!!)
-                        targetUid = message.uid!!
+                        rtcClient?.answer(message.name!!)
+                        targetUid = message.name!!
                         binding!!.remoteViewLoading.visibility = View.GONE
 
                     }

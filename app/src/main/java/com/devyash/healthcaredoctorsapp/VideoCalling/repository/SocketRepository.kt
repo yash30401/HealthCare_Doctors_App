@@ -31,6 +31,7 @@ class SocketRepository(private val messageInterface: NewMessageInterface) {
 
             override fun onMessage(message: String?) {
                 try {
+                    Log.d("OFEERWEBRTC","UId:- "+gson.fromJson(message,MessageModel::class.java).name.toString())
                     messageInterface.onNewMessage(gson.fromJson(message,MessageModel::class.java))
 
                 }catch (e:Exception){
@@ -48,7 +49,7 @@ class SocketRepository(private val messageInterface: NewMessageInterface) {
 
         }
         webSocket?.connect()
-
+        Log.d("OFEERWEBRTC",webSocket?.socket?.isConnected.toString())
     }
 
     fun sendMessageToSocket(message: MessageModel) {
@@ -58,5 +59,10 @@ class SocketRepository(private val messageInterface: NewMessageInterface) {
         } catch (e: Exception) {
             Log.d(VIDEOCALLINGWEBRTC, "sendMessageToSocket: $e")
         }
+    }
+
+    fun closeConnection(){
+        webSocket?.connection?.closeConnection(0,"Close")
+        webSocket = null
     }
 }
