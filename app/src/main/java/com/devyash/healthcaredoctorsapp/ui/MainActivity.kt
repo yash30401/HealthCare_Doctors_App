@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity(),NewMessageInterface,UpcomingAppointment
                         setCallLayoutVisible()
                         binding?.apply {
                             rtcClient?.initializeSurfaceView(localView)
-                            rtcClient?.initializeSurfaceView(remoteView)
+                            rtcClient?.initializeSurfaceView(binding.remoteView)
                             rtcClient?.startLocalVideo(localView)
                             rtcClient?.call(targetUID)
                         }
@@ -325,7 +325,7 @@ class MainActivity : AppCompatActivity(),NewMessageInterface,UpcomingAppointment
 
                         binding?.apply {
                             rtcClient?.initializeSurfaceView(localView)
-                            rtcClient?.initializeSurfaceView(remoteView)
+                            rtcClient?.initializeSurfaceView(binding.remoteView)
                             rtcClient?.startLocalVideo(localView)
                         }
                         val session = SessionDescription(
