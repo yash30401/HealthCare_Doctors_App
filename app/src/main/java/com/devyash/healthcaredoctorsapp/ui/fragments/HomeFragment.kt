@@ -3,7 +3,6 @@ package com.devyash.healthcaredoctorsapp.ui.fragments
 import android.Manifest
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -27,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.VideoCalling.RTCClient
 import com.devyash.healthcaredoctorsapp.VideoCalling.models.IceCandidateModel.IceCandidateModel
+import com.devyash.healthcaredoctorsapp.VideoCalling.models.TYPE
 import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
 import com.devyash.healthcaredoctorsapp.VideoCalling.utils.NewMessageInterface
 import com.devyash.healthcaredoctorsapp.VideoCalling.utils.PeerConnectionObserver
@@ -34,7 +34,6 @@ import com.devyash.healthcaredoctorsapp.VideoCalling.utils.RtcAudioManager
 import com.devyash.healthcaredoctorsapp.adapters.SlotAdapter
 import com.devyash.healthcaredoctorsapp.adapters.UpcomingAppointmentAdapter
 import com.devyash.healthcaredoctorsapp.databinding.FragmentHomeBinding
-import com.devyash.healthcaredoctorsapp.models.DetailedDoctorAppointment
 import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import com.devyash.healthcaredoctorsapp.models.SlotList
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
@@ -46,7 +45,6 @@ import com.devyash.healthcaredoctorsapp.others.Constants.GETTINGSLOTSFROMFIREBAS
 import com.devyash.healthcaredoctorsapp.others.Constants.HEADERLAYOUTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.MAINFRAGMENTTAG
 import com.devyash.healthcaredoctorsapp.others.Constants.SLOTTESTING
-import com.devyash.healthcaredoctorsapp.ui.CallActivity
 import com.devyash.healthcaredoctorsapp.utils.BottomNavigationVisibilityListener
 import com.devyash.healthcaredoctorsapp.viewmodels.AppointmentViewModel
 import com.devyash.healthcaredoctorsapp.viewmodels.AuthViewModel
@@ -450,7 +448,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                     )
 
                     socketRepository?.sendMessageToSocket(
-                        MessageModel("ice_candidate", uid, targetUID, candidate)
+                        MessageModel(TYPE.ICE_CANDIDATE, uid, targetUID, candidate)
                     )
                 }
 
@@ -511,7 +509,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
             setIncomingCallLayoutGone()
             rtcClient?.endCall()
             bottomNavigationVisibilityListener?.setBottomNavigationVisibility(true)
-            val message = MessageModel("call_ended", uid, targetUID, null)
+            val message = MessageModel(TYPE.CALL_ENDED, uid, targetUID, null)
             socketRepository?.sendMessageToSocket(message)
         }
 
@@ -535,7 +533,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
 
     override fun onNewMessage(message: MessageModel) {
         when(message.type){
-            "call_response"->{
+            TYPE.CALL_RESPONSE->{
                 if (message.data == "user is not online"){
                     //user is not reachable
                     lifecycleScope.launch {
@@ -560,7 +558,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                     }
                 }
             }
-            "answer_received" ->{
+            TYPE.ANSWER_RECIEVED ->{
 
                 val session = SessionDescription(
                     SessionDescription.Type.ANSWER,
@@ -573,7 +571,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                     }
                 }
             }
-            "offer_received" ->{
+            TYPE.OFFER_RECIEVED ->{
                 Log.d("OFEERWEBRTC","Recived")
 
                 lifecycleScope.launch {
@@ -611,7 +609,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
             }
 
 
-            "ice_candidate"->{
+            TYPE.ICE_CANDIDATE->{
                 try {
                     val receivingCandidate = gson.fromJson(gson.toJson(message.data),
                         IceCandidateModel::class.java)
@@ -624,7 +622,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                 }
             }
 
-            "call_ended" -> {
+            TYPE.CALL_ENDED -> {
                 lifecycleScope.launch {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(requireContext(), "The call has ended", Toast.LENGTH_LONG).show()
@@ -635,6 +633,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                     }
                 }
             }
+
+            else -> {}
         }
     }
 
@@ -666,7 +666,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                     targetUID = userUId
                     socketRepository?.sendMessageToSocket(
                         MessageModel(
-                            "start_call", uid, targetUID, null
+                            TYPE.START_CALL, uid, targetUID, null
                         )
                     )
                     bottomNavigationVisibilityListener?.setBottomNavigationVisibility(false)

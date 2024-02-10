@@ -1,6 +1,7 @@
 package com.devyash.healthcaredoctorsapp.VideoCalling
 
 import android.app.Application
+import com.devyash.healthcaredoctorsapp.VideoCalling.models.TYPE
 import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
 import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import org.webrtc.AudioTrack
@@ -138,7 +139,7 @@ class RTCClient(
 
                         socketRepository.sendMessageToSocket(
                             MessageModel(
-                                "create_offer", username, target, offer
+                                TYPE.CREATE_OFFER, username, target, offer
                             )
                         )
                     }
@@ -201,7 +202,7 @@ class RTCClient(
                         )
                         socketRepository.sendMessageToSocket(
                             MessageModel(
-                                "create_answer", username, target, answer
+                                TYPE.CREATE_ANSWER, username, target, answer
                             )
                         )
                     }

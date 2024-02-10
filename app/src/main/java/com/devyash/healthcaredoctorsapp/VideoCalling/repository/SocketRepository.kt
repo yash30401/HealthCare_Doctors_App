@@ -1,6 +1,7 @@
 package com.devyash.healthcaredoctorsapp.VideoCalling.repository
 
 import android.util.Log
+import com.devyash.healthcaredoctorsapp.VideoCalling.models.TYPE
 import com.devyash.healthcaredoctorsapp.VideoCalling.utils.NewMessageInterface
 import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import com.google.gson.Gson
@@ -23,7 +24,7 @@ class SocketRepository(private val messageInterface: NewMessageInterface) {
             override fun onOpen(handshakedata: ServerHandshake?) {
                 sendMessageToSocket(
                     MessageModel(
-                        "store_user",uid,null,null
+                        TYPE.STORE_USER,uid,null,null
                     )
                 )
 
