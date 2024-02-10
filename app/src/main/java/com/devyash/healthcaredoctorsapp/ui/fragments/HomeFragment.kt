@@ -602,6 +602,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                         }
                         binding?.rejectButton?.setOnClickListener {
                             setIncomingCallLayoutGone()
+                            bottomNavigationVisibilityListener?.setBottomNavigationVisibility(false)
                         }
 
                     }
@@ -630,6 +631,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                         bottomNavigationVisibilityListener?.setBottomNavigationVisibility(true)
                         rtcClient?.endCall()
                         binding.callLayout.visibility = View.GONE
+                        setIncomingCallLayoutGone()
                     }
                 }
             }
