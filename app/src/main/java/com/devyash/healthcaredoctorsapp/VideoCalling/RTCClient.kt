@@ -2,7 +2,7 @@ package com.devyash.healthcaredoctorsapp.VideoCalling
 
 import android.app.Application
 import com.devyash.healthcaredoctorsapp.VideoCalling.models.TYPE
-import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
+import com.devyash.healthcaredoctorsapp.VideoCalling.repository.WebSocketManager
 import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import org.webrtc.AudioTrack
 import org.webrtc.Camera2Enumerator
@@ -19,12 +19,11 @@ import org.webrtc.SessionDescription
 import org.webrtc.SurfaceTextureHelper
 import org.webrtc.SurfaceViewRenderer
 import org.webrtc.VideoTrack
-import javax.inject.Inject
 
 class RTCClient(
     private val application: Application,
     private val username: String,
-    private val socketRepository: SocketRepository,
+    private val webSocketManager: WebSocketManager,
     private val observer: PeerConnection.Observer
 ) {
 
@@ -137,7 +136,7 @@ class RTCClient(
                             "type" to desc?.type
                         )
 
-                        socketRepository.sendMessageToSocket(
+                        webSocketManager.sendMessageToSocket(
                             MessageModel(
                                 TYPE.CREATE_OFFER, username, target, offer
                             )
@@ -200,7 +199,7 @@ class RTCClient(
                             "sdp" to desc?.description,
                             "type" to desc?.type
                         )
-                        socketRepository.sendMessageToSocket(
+                        webSocketManager.sendMessageToSocket(
                             MessageModel(
                                 TYPE.CREATE_ANSWER, username, target, answer
                             )

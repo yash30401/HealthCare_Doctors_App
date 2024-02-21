@@ -1,30 +1,17 @@
 package com.devyash.healthcaredoctorsapp.ui
 
-import android.Manifest
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.devyash.healthcaredoctorsapp.R
-import com.devyash.healthcaredoctorsapp.VideoCalling.RTCClient
-import com.devyash.healthcaredoctorsapp.VideoCalling.models.IceCandidateModel.IceCandidateModel
-import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
-import com.devyash.healthcaredoctorsapp.VideoCalling.utils.NewMessageInterface
-import com.devyash.healthcaredoctorsapp.VideoCalling.utils.PeerConnectionObserver
-import com.devyash.healthcaredoctorsapp.VideoCalling.utils.RtcAudioManager
-import com.devyash.healthcaredoctorsapp.adapters.UpcomingAppointmentAdapter
 import com.devyash.healthcaredoctorsapp.databinding.ActivityMainBinding
-import com.devyash.healthcaredoctorsapp.models.MessageModel.MessageModel
 import com.devyash.healthcaredoctorsapp.networking.NetworkResult
-import com.devyash.healthcaredoctorsapp.others.Constants
 import com.devyash.healthcaredoctorsapp.others.Constants.FIREBASEMESSAGINTOKEN
 import com.devyash.healthcaredoctorsapp.utils.BottomNavigationVisibilityListener
 import com.devyash.healthcaredoctorsapp.viewmodels.FirebaseMessagingViewModel
@@ -34,13 +21,8 @@ import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderF
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
-import com.google.gson.Gson
-import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.webrtc.IceCandidate
-import org.webrtc.MediaStream
-import org.webrtc.SessionDescription
 import javax.inject.Inject
 
 @AndroidEntryPoint

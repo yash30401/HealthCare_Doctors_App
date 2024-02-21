@@ -27,7 +27,7 @@ import com.devyash.healthcaredoctorsapp.R
 import com.devyash.healthcaredoctorsapp.VideoCalling.RTCClient
 import com.devyash.healthcaredoctorsapp.VideoCalling.models.IceCandidateModel.IceCandidateModel
 import com.devyash.healthcaredoctorsapp.VideoCalling.models.TYPE
-import com.devyash.healthcaredoctorsapp.VideoCalling.repository.SocketRepository
+import com.devyash.healthcaredoctorsapp.VideoCalling.repository.WebSocketManager
 import com.devyash.healthcaredoctorsapp.VideoCalling.utils.NewMessageInterface
 import com.devyash.healthcaredoctorsapp.VideoCalling.utils.PeerConnectionObserver
 import com.devyash.healthcaredoctorsapp.VideoCalling.utils.RtcAudioManager
@@ -85,7 +85,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
     private lateinit var slotAdapter: SlotAdapter
     private lateinit var upcomingAppointmentAdapter: UpcomingAppointmentAdapter
 
-    lateinit var socketRepository: SocketRepository
+    lateinit var webSocketManager: WebSocketManager
 
     lateinit var uid: String
     lateinit var targetUID: String
@@ -431,12 +431,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
     }
 
     private fun init() {
-        socketRepository = SocketRepository(this)
-        uid?.let { socketRepository?.initSocket(it) }
+        webSocketManager = WebSocketManager(this)
+        uid?.let { webSocketManager?.initSocket(it) }
         rtcClient = RTCClient(
             activity?.application!!,
             uid!!,
-            socketRepository!!,
+            webSocketManager!!,
             object : PeerConnectionObserver() {
                 override fun onIceCandidate(p0: IceCandidate?) {
                     super.onIceCandidate(p0)
@@ -447,7 +447,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
                         "sdpCandidate" to p0?.sdp
                     )
 
-                    socketRepository?.sendMessageToSocket(
+                    webSocketManager?.sendMessageToSocket(
                         MessageModel(TYPE.ICE_CANDIDATE, uid, targetUID, candidate)
                     )
                 }
@@ -510,7 +510,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
             rtcClient?.endCall()
             bottomNavigationVisibilityListener?.setBottomNavigationVisibility(true)
             val message = MessageModel(TYPE.CALL_ENDED, uid, targetUID, null)
-            socketRepository?.sendMessageToSocket(message)
+            webSocketManager?.sendMessageToSocket(message)
         }
 
     }
@@ -664,7 +664,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
             ).request { allGranted, _, _ ->
                 if (allGranted) {
                     targetUID = userUId
-                    socketRepository?.sendMessageToSocket(
+                    webSocketManager?.sendMessageToSocket(
                         MessageModel(
                             TYPE.START_CALL, uid, targetUID, null
                         )
@@ -698,7 +698,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), AddDateTimeClickListener,
         _binding = null
         rtcClient?.endCall() // Close any existing WebRTC connections
         rtcClient = null
-        socketRepository.closeConnection()
+        webSocketManager.closeConnection()
     }
 }
 
